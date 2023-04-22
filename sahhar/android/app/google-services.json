@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "128325721692",
+    "firebase_url": "https://sahharlaserapp-default-rtdb.firebaseio.com",
+    "project_id": "sahharlaserapp",
+    "storage_bucket": "sahharlaserapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128325721692:android:d85f9fe0d03bd742d99099",
+        "android_client_info": {
+          "package_name": "com.example.sahhar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "128325721692-vrt43ghvejre5hgne0qqleopro3e26jd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sahhar",
+            "certificate_hash": "81f74fb78a841e69b2375ee74336029bdc7efe62"
+          }
+        },
+        {
+          "client_id": "128325721692-brst691dqp53o89ukjecpis4upgq671s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAwlaFZWfSy8D4_R_79Vr2Nk4pfutTnwU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128325721692-brst691dqp53o89ukjecpis4upgq671s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
