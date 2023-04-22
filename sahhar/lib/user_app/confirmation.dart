@@ -1,9 +1,6 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:sahhar/user_app/Home.dart';
 import 'package:sahhar/user_app/confirm.dart';
 
 class Checkout extends StatefulWidget {
@@ -15,9 +12,8 @@ class CheckoutState extends State<Checkout> {
   bool payNow = false;
   bool payOnDelivery = false;
 
-  Future<void> PlaceOrder() async {
+  Future<void> placeOrder() async {
     final user = FirebaseAuth.instance.currentUser;
-
     final cartDocs = await FirebaseFirestore.instance
         .collection('users')
         .doc(user?.uid)
@@ -51,8 +47,6 @@ class CheckoutState extends State<Checkout> {
         doc.reference.delete();
       }
     });
-
-    //Navigator.pushNamed(context, '/confirm');
   }
 
   @override
@@ -61,7 +55,7 @@ class CheckoutState extends State<Checkout> {
     User? user = _auth.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title:const Text(
+        title: const Text(
           'Checkout',
           style: TextStyle(
             color: Colors.white,
@@ -69,52 +63,20 @@ class CheckoutState extends State<Checkout> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF7E0000),
-        toolbarHeight: 100,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20))),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 26),
+          height: MediaQuery.of(context).size.height * 0.88,
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-             const SizedBox(height: 30),
-             const Text(
-                'Your Order',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Sahhar Laser',
-                style: TextStyle(
-                  color: Color(0xFF7E0000),
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: const Center(
-                  child: Text(
-                    'Checkout',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 5),
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('users')
@@ -126,63 +88,149 @@ class CheckoutState extends State<Checkout> {
                   if (!snapshot.hasData) {
                     return Container();
                   }
-                  return Column(
-                    children: snapshot.data!.docs.map((document) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.blueGrey[300]!,
-                              width: 1.0,
+                  return RefreshIndicator(
+                    color: const Color(0xFF7E0000),
+                    onRefresh: () async {
+                      await Future.delayed(const Duration(seconds: 3))
+                          .whenComplete(() => setState(
+                                () {},
+                              ));
+                    },
+                    child: Container(
+                      color: Colors.grey.shade300,
+                      height: MediaQuery.of(context).size.height * 0.70,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView(
+                        children: snapshot.data!.docs.map((document) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.14,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: const Color(0xFF7E0000).withOpacity(0.3),
                             ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              document['name'],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Column(
+                                    children: [
+                                      ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          child: Image.network(
+                                            document['imageUrl'],
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.38,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.125,
+                                            fit: BoxFit.fill,
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 25,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.40,
+                                        child: Text(
+                                          document['name'],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 25,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.40,
+                                        child: Text(
+                                          '${document['description']}',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${document['price']} ₪',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      color: Colors.white,
+                                      alignment: Alignment.topRight,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 4),
+                                      icon: const Icon(Icons.cancel_outlined),
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            Text(
-                              '${document['price']} ₪',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   );
                 },
               ),
-              const SizedBox(height: 20),
+              const Divider(
+                color: Color(0xFF7E0000),
+                thickness: 2,
+                height: 5,
+              ),
+              // const Spacer(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 216, 216, 216),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  SizedBox(
+                    width: 63,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          '  Total ',
+                          'Total :',
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 22,
                           ),
+                        ),
+                        const Divider(
+                          color: Color(0xFF7E0000),
+                          thickness: 2,
+                          height: 5,
                         ),
                         StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
@@ -198,7 +246,7 @@ class CheckoutState extends State<Checkout> {
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: 24,
                                 ),
                               );
                             }
@@ -213,9 +261,9 @@ class CheckoutState extends State<Checkout> {
                             return Text(
                               '$totalPrice ₪  ',
                               style: const TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF7E0000),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 22,
                               ),
                             );
                           },
@@ -223,14 +271,11 @@ class CheckoutState extends State<Checkout> {
                       ],
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Column(
-                children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Checkbox(
+                        activeColor: const Color(0xFF7E0000),
                         value: payNow,
                         onChanged: (value) {
                           setState(() {
@@ -250,9 +295,11 @@ class CheckoutState extends State<Checkout> {
                     ],
                   ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Checkbox(
                         value: payOnDelivery,
+                        activeColor: const Color(0xFF7E0000),
                         onChanged: (value) {
                           setState(() {
                             payOnDelivery = value ?? false;
@@ -272,30 +319,33 @@ class CheckoutState extends State<Checkout> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => confirm()),
-                  );
-                  PlaceOrder();
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF7E0000),
+              const Spacer(),
+              Container(
+                width: MediaQuery.of(context).size.width - 16,
+                height: 45,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: RawMaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => confirm()),
+                    );
+                    placeOrder();
+                  },
+                  fillColor: const Color(0xFF7E0000),
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: const Text(
                     'Place Order',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
                     ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
         ),

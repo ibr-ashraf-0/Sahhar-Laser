@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:sahhar/auth_screens/startScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sahhar/user_app/Home.dart';
-
 import 'admin_app/AdminDashboard.dart';
+import 'user_app/AccontInfo.dart';
+import 'user_app/CartPage.dart';
+import 'user_app/LikePage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,29 @@ void main() async {
   runApp(SahharApp());
 }
 
-class SahharApp extends StatelessWidget {
+class SahharApp extends StatefulWidget {
+  @override
+  State<SahharApp> createState() => _SahharAppState();
+}
+
+class _SahharAppState extends State<SahharApp> {
+  // final int _selectedIndex = 0;
+
+  final List<Widget> _widgetOptions = [
+    const HomePage(),
+    const LikePage(),
+    CartPage(),
+    const AccontInfo(),
+  ];
+
+  int _curntInedx = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _curntInedx = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,7 +73,59 @@ class SahharApp extends StatelessWidget {
               return AdminDashboard();
             } else if (snapshot.hasData &&
                 snapshot.data!.email != 'admin@gmail.com') {
-              return const HomePage();
+              return Scaffold(
+                appBar: _curntInedx != 3
+                    ? AppBar(
+                        title: const Text(
+                          'Categories',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20))),
+                      )
+                    : null,
+                body: _widgetOptions.elementAt(_curntInedx),
+                bottomNavigationBar: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Categories',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.favorite),
+                      label: 'likes',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.shopping_cart),
+                      label: 'Cart',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                  ],
+                  currentIndex: _curntInedx,
+                  selectedItemColor: const Color(0xFF7E0000),
+                  unselectedItemColor: Colors.black,
+                  onTap: (index) {
+                    if (index == 0) {
+                      _onItemTapped(index);
+                    } else if (index == 1) {
+                      _onItemTapped(index);
+                    } else if (index == 2) {
+                      _onItemTapped(index);
+                    } else if (index == 3) {
+                      _onItemTapped(index);
+                    }
+                  },
+                ),
+              );
             } else {
               return const Start_screen();
             }
