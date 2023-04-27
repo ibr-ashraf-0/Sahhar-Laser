@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4c5f293c-d3ed-4e8f-b39e-4c63b79b2a3f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/admin_app/AdminDashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/admin_app/AdminDashboard.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/auth_screens/LoginPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/auth_screens/LoginPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/auth_screens/startScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/CartPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/CartPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/Home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/Home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/ProductDetails.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/ProductDetails.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/confirm.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/confirm.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/confirmation.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/products.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/products.dart" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dart File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2OQHkyJDhRbdQgzR7uPVw1pAkKi" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/sahhar" />
+    <property name="settings.editor.selected.configurable" value="dart.settings" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hp\DEVOLPMENT\projects\sahhar-master\sahhar\lib\model" />
+      <recent name="C:\Users\hp\DEVOLPMENT\projects\sahhar-master\sahhar\lib\user_app" />
+      <recent name="C:\Users\hp\DEVOLPMENT\projects\sahhar-master\sahhar\lib\auth_screens" />
+      <recent name="C:\Users\hp\DEVOLPMENT\projects\sahhar-master\sahhar\lib\admin_app" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Flutter.main.dart">
+    <configuration name="main" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
+      <method v="2" />
+    </configuration>
+    <configuration name="Home.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
+      <option name="filePath" value="$PROJECT_DIR$/sahhar/lib/user_app/Home.dart" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
+      <option name="filePath" value="$PROJECT_DIR$/sahhar/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Dart Command Line App.main" />
+      <item itemvalue="Flutter.Home.dart" />
+      <item itemvalue="Flutter.main.dart" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Flutter.main.dart" />
+        <item itemvalue="Flutter.Home.dart" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4c5f293c-d3ed-4e8f-b39e-4c63b79b2a3f" name="Changes" comment="" />
+      <created>1681486035343</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1681486035343</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sahhar/auth_screens/startScreen.dart';
+import 'package:sahhar/widget/startScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sahhar/user_app/Home.dart';
 import 'admin_app/AdminDashboard.dart';
@@ -13,7 +13,6 @@ void main() async {
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       name: 'SahharLaserApp',
-      // options: DefaultFirebaseOptions.currentPlatform,
       options: const FirebaseOptions(
         appId: "1:128325721692:android:d85f9fe0d03bd742d99099",
         apiKey: "AIzaSyB7Ftohg3cd1j7IefUbz580nlrV5d9egFM",
@@ -34,8 +33,6 @@ class SahharApp extends StatefulWidget {
 }
 
 class _SahharAppState extends State<SahharApp> {
-  // final int _selectedIndex = 0;
-
   final List<Widget> _widgetOptions = [
     const HomePage(),
     const LikePage(),
@@ -76,18 +73,25 @@ class _SahharAppState extends State<SahharApp> {
               return Scaffold(
                 appBar: _curntInedx != 3
                     ? AppBar(
-                        title: const Text(
-                          'Categories',
-                          style: TextStyle(
+                        title: Text(
+                          _curntInedx == 0
+                              ? 'Categories'
+                              : _curntInedx == 1
+                                  ? 'Likes'
+                                  : _curntInedx == 2
+                                      ? 'Cart'
+                                      : '',
+                          style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
+                            fontSize: 26,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20))),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20)),
+                        ),
                       )
                     : null,
                 body: _widgetOptions.elementAt(_curntInedx),

@@ -90,6 +90,7 @@ class HomeProductsState extends State<HomeProducts> {
                           colorUrl: doc['colorUrl'],
                           size: doc['size'],
                           description: doc['description'],
+                          withText: doc['switchValue'],
                         ),
                       ),
                     );

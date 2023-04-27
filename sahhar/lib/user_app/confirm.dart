@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sahhar/user_app/Home.dart';
 
 import '../main.dart';
 
@@ -35,7 +34,6 @@ class confirm extends StatelessWidget {
                   'Congratulations',
                   style: TextStyle(
                     fontSize: 30,
-                    // fontWeight: FontWeight.bold,
                   ),
                 ),
                 const Divider(

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -12,16 +13,18 @@ class _SignUpState extends State<SignUp> {
   Map userData = {
     'Firstname': '',
     'Lastname': '',
+    'phoneNumber': '',
     'email': '',
     'pass': '',
   };
+
   TextEditingController txtpassC = TextEditingController();
 
   bool didclick = false;
 
   bool validateInputs() {
     if (userData['Firstname'].isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
           'Please enter your First Name',
           style: TextStyle(color: Colors.white),
@@ -31,7 +34,7 @@ class _SignUpState extends State<SignUp> {
       return false;
     }
     if (userData['Lastname'].isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
           'Please enter your Last Name',
           style: TextStyle(color: Colors.white),
@@ -40,8 +43,19 @@ class _SignUpState extends State<SignUp> {
       ));
       return false;
     }
+    if (userData['phoneNumber'].toString().isEmpty ||
+        userData['phoneNumber'].toString().length < 9) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          'Please enter a valid number with your WhatsApp introduction',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xFF7E0000),
+      ));
+      return false;
+    }
     if (userData['email'].isEmpty || !userData['email'].contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
           'Please enter a Valid email address',
           style: TextStyle(color: Colors.white),
@@ -51,7 +65,7 @@ class _SignUpState extends State<SignUp> {
       return false;
     }
     if (userData['pass'].isEmpty || userData['pass'].length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
           'Please enter a Password with at least 6 characters',
           style: TextStyle(color: Colors.white),
@@ -60,8 +74,8 @@ class _SignUpState extends State<SignUp> {
       ));
       return false;
     }
-    if (txtpassC!.text != userData['pass']) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    if (txtpassC.text != userData['pass']) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
           'Passwords do Not match',
           style: TextStyle(color: Colors.white),
@@ -70,6 +84,7 @@ class _SignUpState extends State<SignUp> {
       ));
       return false;
     }
+
     return true;
   }
 
@@ -85,6 +100,7 @@ class _SignUpState extends State<SignUp> {
               Navigator.of(context).pop();
             },
           ),
+          elevation: 0,
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -155,7 +171,7 @@ class _SignUpState extends State<SignUp> {
                         labelText: "First Name",
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextField(
                       cursorColor: const Color(0xFF7E0000),
                       onChanged: (value) => userData['Lastname'] = value,
@@ -183,7 +199,36 @@ class _SignUpState extends State<SignUp> {
                         labelText: "Last Name",
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
+                    TextField(
+                      cursorColor: const Color(0xFF7E0000),
+                      onChanged: (value) => userData['phoneNumber'] = value,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.call,
+                          color: Color(0xFF7E0000),
+                          size: 25,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                              width: 1.0,
+                            )),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Color(0xFF7E0000),
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        labelStyle: const TextStyle(
+                          color: Color(0xFF7E0000),
+                        ),
+                        labelText: "phone Number",
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     TextField(
                       onChanged: (value) => userData['email'] = value,
                       cursorColor: const Color(0xFF7E0000),
@@ -211,7 +256,7 @@ class _SignUpState extends State<SignUp> {
                         labelText: "Email",
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextField(
                       onChanged: (value) => userData['pass'] = value,
                       cursorColor: const Color(0xFF7E0000),
@@ -240,7 +285,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       obscureText: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: txtpassC,
                       cursorColor: const Color(0xFF7E0000),
@@ -273,6 +318,7 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       child: InkWell(
                         onTap: () async {
+                          print(userData['phoneNumber']);
                           if (!validateInputs()) return;
                           FirebaseAuth auth = FirebaseAuth.instance;
                           try {
@@ -285,58 +331,56 @@ class _SignUpState extends State<SignUp> {
                                 .set({
                               "Firstname": userData['Firstname'],
                               "Lastname": userData['Lastname'],
+                              'phoneNumber': userData['phoneNumber'],
                               "email": userData['email'],
                               "pass": userData['pass'],
-                            });
-                            // await FirebaseFirestore.instance
-                            //     .collection('users')
-                            //     .doc(auth.currentUser!.uid.toString())
-                            //     .collection('cart')
-                            //     .add();
-                            // ignore: use_build_context_synchronously
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
-                                  title: const Text("Success",
-                                      style: TextStyle(
-                                          fontSize: 24,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold)),
-                                  content: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 10,
-                                    child:
-                                        const Text("Sign up successfully Done"),
-                                  ),
-                                  actions: <Widget>[
-                                    InkWell(
-                                      child: const Text("OK  ",
-                                          style: TextStyle(
-                                              fontSize: 22,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold)),
-                                      onTap: () {
-                                        Navigator.of(context).pop();
-                                      },
+                            }).whenComplete(() {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0)),
+                                    title: const Text(
+                                        "Sign up successfully Done",
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold)),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          10,
+                                      child: const Text(
+                                          "Now you can back to Login with you'r acoont"),
                                     ),
-                                  ],
-                                );
-                              },
-                            );
+                                    actions: <Widget>[
+                                      InkWell(
+                                        child: const Text("OK  ",
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold)),
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            });
                           } catch (error) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(error.toString())));
                           }
                         },
                         child: Container(
-                          width: 170,
-                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          // height: 50,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: const Color(0xFF7E0000).withOpacity(0.6),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: const Center(

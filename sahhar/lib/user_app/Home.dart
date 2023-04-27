@@ -21,31 +21,33 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 226, 226),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: const TextField(
-                cursorColor: Colors.grey,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
-                  label: Text('Search...'),
-                  labelStyle: TextStyle(color: Colors.grey),
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 8),
+          //   child: Container(
+          //     height: 40,
+          //     decoration: BoxDecoration(
+          //       color: const Color.fromARGB(255, 226, 226, 226),
+          //       borderRadius: BorderRadius.circular(30),
+          //     ),
+          //     child: const TextField(
+          //       cursorColor: Colors.grey,
+          //       decoration: InputDecoration(
+          //         prefixIcon: Icon(
+          //           Icons.search,
+          //           color: Colors.grey,
+          //         ),
+          //         label: Text('Search...'),
+          //         labelStyle: TextStyle(color: Colors.grey),
+          //         hintStyle: TextStyle(
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //         border: InputBorder.none,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+         
+         
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance

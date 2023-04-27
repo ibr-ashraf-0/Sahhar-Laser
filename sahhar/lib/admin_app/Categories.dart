@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:sahhar/admin_app/AdminDashboard.dart';
-import 'package:sahhar/EditCategory.dart';
+
+import 'EditCategory.dart';
 
 void main() => runApp(const Categories());
 
@@ -29,7 +27,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = [
     Column(
       children: [
         SizedBox(height: 15),

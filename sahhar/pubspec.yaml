@@ -49,6 +49,8 @@ dependencies:
   firebase_storage: ^11.0.14
   carousel_slider: ^4.2.1
   url_launcher: ^6.1.10
+  percent_indicator: ^4.2.3
+  intl: ^0.18.1
   
 
 

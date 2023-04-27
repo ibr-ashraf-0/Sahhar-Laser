@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../wide/NavBar.dart';
-import 'confirmation.dart';
+import 'CheckoutPage.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 User? user = _auth.currentUser;
-void deleteProduct(String productId) {
+void deleteLikeProduct(String productId) {
   FirebaseFirestore.instance
       .collection('users')
       .doc(user?.uid)
@@ -18,7 +17,7 @@ void deleteProduct(String productId) {
       .catchError((error) => print('Error deleting product: $error'));
 }
 
-void deleteProduct2(String productId) {
+void deleteCartProduct(String productId) {
   FirebaseFirestore.instance
       .collection('users')
       .doc(user?.uid)
@@ -153,7 +152,7 @@ class _CartPageState extends State<CartPage> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  deleteProduct2(productDetails.id);
+                                  deleteCartProduct(productDetails.id);
                                 },
                                 icon: const Icon(
                                   Icons.delete_outlined,

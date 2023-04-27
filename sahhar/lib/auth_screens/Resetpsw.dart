@@ -20,19 +20,17 @@ class ResetpswPageState extends State<Resetpsw> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Reset password',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-          ),
+        title: const Text('Reset password'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_outlined),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        backgroundColor: Color(0xFF7E0000),
-        toolbarHeight: 100,
+        elevation: 0,
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(8),
         child: Form(
           key: formKey,
           child: Column(
@@ -54,7 +52,7 @@ class ResetpswPageState extends State<Resetpsw> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               InkWell(
                 onTap: () async {
                   if (formKey.currentState!.validate()) {
@@ -70,16 +68,18 @@ class ResetpswPageState extends State<Resetpsw> {
                   }
                 },
                 child: Container(
-                  width: 170,
-                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  // height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: const Color(0xFF7E0000).withOpacity(0.6),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Reset Password',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: Colors.black, fontSize: 18),
                     ),
                   ),
                 ),
@@ -93,8 +93,8 @@ class ResetpswPageState extends State<Resetpsw> {
 
   Widget buildAlertDialog(String email) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      title: Text(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      title: const Text(
         "Reset Password Success",
         style: TextStyle(
           fontSize: 24,
@@ -105,12 +105,12 @@ class ResetpswPageState extends State<Resetpsw> {
       content: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Text(
-          "An email has been sent to : $email To reset your password.",
+          "We will send An email to: $email To reset your password.\n please cheack your email",
         ),
       ),
       actions: <Widget>[
         InkWell(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(
               fontSize: 22,

@@ -11,6 +11,7 @@ class ProductDetails extends StatefulWidget {
   final String price;
   final String colorUrl;
   final String size;
+  final bool withText;
 
   ProductDetails({
     required this.imageUrl,
@@ -19,6 +20,7 @@ class ProductDetails extends StatefulWidget {
     required this.colorUrl,
     required this.size,
     required this.description,
+    required this.withText,
   });
 
   @override
@@ -29,6 +31,7 @@ class ProductDetailsState extends State<ProductDetails> {
   bool isFavorite = false;
   bool isCart = false;
   String currentSizeIndex = '25 C';
+  String nameInProduct = '';
   List<String> itemSize = [
     '5 C',
     '10 C',
@@ -39,12 +42,29 @@ class ProductDetailsState extends State<ProductDetails> {
     '35 C',
     '40 C',
   ];
-  String _currentColor = 'Gold';
-  List imagesPathList = [
-    'assets/facebook.png',
-    'assets/logo.png',
-    'assets/google.png',
+  String _currentColor = 'orange';
+  List<Color> colors = [
+    Colors.black,
+    Colors.orange,
+    Colors.red,
+    Colors.blueGrey,
   ];
+  List<String> colorsName = ['black', 'orange', 'red', 'blueGrey'];
+  List<Color> woodsColor = [
+    const Color.fromARGB(255, 131, 100, 6),
+    const Color.fromARGB(177, 46, 45, 45),
+    const Color.fromARGB(255, 170, 167, 167),
+    const Color.fromRGBO(190, 151, 91, 1),
+  ];
+  List<String> woodsColorsName = [
+    'Gold',
+    'Brazilian rosewood',
+    'Maple',
+    'Birch'
+  ];
+  bool isColorTypeReguler = true;
+  bool isColorTypeWoods = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +79,7 @@ class ProductDetailsState extends State<ProductDetails> {
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20))),
         title: const Text(
-          "ProductDetails",
+          "product Details",
           style: TextStyle(
             color: Colors.white,
             fontSize: 30.0,
@@ -103,7 +123,7 @@ class ProductDetailsState extends State<ProductDetails> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 10,
               ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -124,7 +144,6 @@ class ProductDetailsState extends State<ProductDetails> {
                   style: const TextStyle(fontSize: 18, color: Colors.blueGrey),
                 ),
               ),
-              // const SizedBox(height: 15),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: Row(
@@ -200,69 +219,173 @@ class ProductDetailsState extends State<ProductDetails> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Your Order Color is: ",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                        Row(
+                          children: [
+                            const Text(
+                              "Your Order Color is: ",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              height: 20,
+                              width: 85,
+                              child: Text(
+                                _currentColor,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                    color: Color(0xFF7E0000),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          _currentColor,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                              color: Color(0xFF7E0000),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600),
+                        Column(
+                          children: [
+                            Container(
+                              height: 20,
+                              padding: EdgeInsets.zero,
+                              margin: EdgeInsets.zero,
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'reguler Colors',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Checkbox(
+                                    activeColor: const Color(0xFF7E0000),
+                                    value: isColorTypeReguler,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        if (val!) {
+                                          isColorTypeReguler = val;
+                                          isColorTypeWoods = false;
+                                        } else {
+                                          isColorTypeReguler = true;
+                                        }
+                                      });
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 3,
+                            ),
+                            Container(
+                              height: 20,
+                              padding: EdgeInsets.zero,
+                              margin: EdgeInsets.zero,
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'woods Colors',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Checkbox(
+                                    activeColor: const Color(0xFF7E0000),
+                                    value: isColorTypeWoods,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        if (val!) {
+                                          isColorTypeWoods = val;
+                                          isColorTypeReguler = false;
+                                        } else {
+                                          isColorTypeWoods = true;
+                                        }
+                                      });
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     const SizedBox(height: 5),
-                    CarouselSlider(
-                      options: CarouselOptions(
-                        height: MediaQuery.of(context).size.height * 0.15,
-                        initialPage: 0,
-                        autoPlay: false,
-                        onPageChanged: (index, _) {
-                          print(index);
-                          print(_currentColor);
-                          if (index == 0) {
-                            setState(() {
-                              _currentColor = 'Gold';
-                            });
-                          } else if (index == 1) {
-                            setState(() {
-                              _currentColor = 'Black';
-                            });
-                          } else {
-                            setState(() {
-                              _currentColor = 'Red';
-                            });
-                          }
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: double.infinity,
+                            height: 50,
+                            margin: const EdgeInsets.only(
+                                top: 5, right: 2, left: 2, bottom: 0),
+                            decoration: BoxDecoration(
+                              color: isColorTypeReguler
+                                  ? colors[index]
+                                  : isColorTypeWoods
+                                      ? woodsColor[index]
+                                      : Colors.black,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isColorTypeReguler) {
+                                    _currentColor = colorsName[index];
+                                  } else {
+                                    _currentColor = woodsColorsName[index];
+                                  }
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: ListTile(
+                                  title: Text(
+                                    isColorTypeReguler
+                                        ? colorsName[index]
+                                        : isColorTypeWoods
+                                            ? woodsColorsName[index]
+                                            : 'No Colors',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  trailing:
+                                      _currentColor == colorsName[index] ||
+                                              _currentColor ==
+                                                  woodsColorsName[index]
+                                          ? const Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                            )
+                                          : const SizedBox(
+                                              height: 2,
+                                              width: 2,
+                                            ),
+                                ),
+                              ),
+                            ),
+                          );
                         },
-                        scrollDirection: Axis.horizontal,
-                        pauseAutoPlayOnTouch: true,
-                        enableInfiniteScroll: true,
-                        enlargeCenterPage: true,
+                        itemCount: isColorTypeReguler && !isColorTypeWoods
+                            ? colorsName.length
+                            : isColorTypeWoods && !isColorTypeReguler
+                                ? woodsColorsName.length
+                                : 7,
                       ),
-                      items: imagesPathList.map((imageUrl) {
-                        return SizedBox(
-                          width: 180,
-                          child: Image.asset(imageUrl, fit: BoxFit.fill),
-                        );
-                      }).toList(),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 15),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
@@ -320,8 +443,55 @@ class ProductDetailsState extends State<ProductDetails> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: widget.withText ? 10 : 0,
+              ),
+              widget.withText
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      child: const Text(
+                        'Write the name you whold like to be in proguct',
+                        style: TextStyle(
+                            color: Color(0xFF7E0000),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : const SizedBox(height: 0, width: 0),
+              SizedBox(
+                height: widget.withText ? 5 : 0,
+              ),
+              widget.withText
+                  ? Container(
+                      height: 35,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextField(
+                        cursorColor: const Color(0xFF7E0000),
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              )),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF7E0000),
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          labelStyle: const TextStyle(
+                              color: Color(0xFF7E0000), fontSize: 15),
+                          labelText: "Name in product",
+                        ),
+                        onChanged: (value) {
+                          nameInProduct = value;
+                        },
+                      ),
+                    )
+                  : Container(),
               const SizedBox(
-                height: 15,
+                height: 10,
               ),
               Center(
                 child: Container(
@@ -357,6 +527,7 @@ class ProductDetailsState extends State<ProductDetails> {
                         'colorUrl': _currentColor,
                         'size': currentSizeIndex,
                         'description': widget.description,
+                        'nameInProduct': nameInProduct,
                       };
                       if (user != null) {
                         if (isCart != true) {
