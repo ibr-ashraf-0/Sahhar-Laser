@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,12 +15,11 @@ class EditCategory extends StatefulWidget {
 }
 
 class _EditCategoryState extends State<EditCategory> {
-  final formKey = GlobalKey<FormState>();
-  final txtcateg = TextEditingController();
-  final imageController = TextEditingController();
-  late File imageFile;
-  //String? imageUrl;
-
+  String txtcateg = '';
+  TextEditingController initValue = TextEditingController();
+  String? imageUrl;
+  XFile? _fileImage;
+  ImagePicker picker = ImagePicker();
   @override
   void initState() {
     super.initState();
@@ -31,10 +30,8 @@ class _EditCategoryState extends State<EditCategory> {
         .get()
         .then((docSnapshot) {
       if (docSnapshot.exists) {
-        setState(() {
-          txtcateg.text = docSnapshot['name'];
-          imageFile = docSnapshot['imageUrl'];
-        });
+        initValue.text = docSnapshot['name'];
+        imageUrl = docSnapshot['imageUrl'];
       }
     });
   }
@@ -43,7 +40,7 @@ class _EditCategoryState extends State<EditCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Edit Category',
           style: TextStyle(
             color: Colors.white,
@@ -51,154 +48,173 @@ class _EditCategoryState extends State<EditCategory> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF7E0000),
-        toolbarHeight: 100,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        )),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                SizedBox(height: 40),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Edit Category',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 60),
-                TextFormField(
-                  controller: txtcateg,
-                  decoration: InputDecoration(
-                    labelText: 'Name of Category',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  /*validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter a name';
-                  }
-                  return null;
-                },*/
-                ),
-                SizedBox(height: 60),
-                InkWell(
-                  onTap: () async {
-                    ImagePicker imagePicker = ImagePicker();
-                    // use the getImage method on the instance to pick an image from the gallery
-                    var image =
-                        await imagePicker.getImage(source: ImageSource.gallery);
-                    // set the image path to the controller
-                    if (image != null) {
-                      setState(() {
-                        imageFile = File(image.path);
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 226, 224, 224),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.attach_file),
-                        SizedBox(width: 5),
-                        Text(
-                          'Choose Image',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection("categories")
+                      .doc(widget.categoryId)
+                      .get(),
+                  builder: (contex, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const CircularProgressIndicator(
+                        color: Color(0xFF7E0000),
+                      );
+                    } else {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.30,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(snapshot.data!['imageUrl']),
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    }
+                  }),
+              const SizedBox(height: 10),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Edit Category Information...',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: 80),
-                InkWell(
-                  onTap: () async {
+              ),
+              const SizedBox(height: 30),
+              TextFormField(
+                onChanged: (val) {
+                  txtcateg = val;
+                },
+                controller: initValue,
+                decoration: InputDecoration(
+                  labelText: 'Name of Category',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 35),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                alignment: Alignment.centerLeft,
+                child: RawMaterialButton(
+                  fillColor: const Color(0xFF7E0000),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  autofocus: true,
+                  onPressed: () async {
+                    // upload the image to Firebase & Storage
+                    final pickedImageFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (pickedImageFile != null) {
+                      _fileImage = XFile(pickedImageFile.path);
+                      final storage = FirebaseStorage.instance
+                          .ref()
+                          .child('categories/${DateTime.now().toString()}');
+                      await storage
+                          .putFile(File(_fileImage!.path))
+                          .then((_) async {
+                        String imageUrl = await storage.getDownloadURL();
+                        await FirebaseFirestore.instance
+                            .collection("categories")
+                            .doc(widget.categoryId)
+                            .update({
+                          'imageUrl': imageUrl,
+                        });
+                        setState(() {});
+                      });
+                    } else {
+                      print('No Image Selcted');
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.attach_file,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Choose Image',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 35),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: RawMaterialButton(
+                  fillColor: const Color(0xFF7E0000),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  autofocus: true,
+                  onPressed: () async {
                     try {
-                      // upload the image to Firebase Storage
-                      String imageUrl = '';
-                      if (imageFile != null) {
-                        final ref = FirebaseStorage.instance
-                            .ref()
-                            .child('categories/${DateTime.now().toString()}');
-                        await ref.putFile(imageFile);
-                        imageUrl = await ref.getDownloadURL();
-                      }
-
-                      // add the category to Firestore
+                      var fierbase = FirebaseFirestore.instance
+                          .collection('products')
+                          .get();
+                      // Edit catogry name in product collection
+                      fierbase.then((docSnapshot) {
+                        docSnapshot.docs.firstWhere((element) {
+                          print(element.id);
+                          FirebaseFirestore.instance
+                              .collection('products')
+                              .doc(element.id)
+                              .update({'categories': txtcateg});
+                          return true;
+                        });
+                      });
+                      // Edit category name in categories collection
                       await FirebaseFirestore.instance
                           .collection("categories")
                           .doc(widget.categoryId)
                           .update({
-                        'name': txtcateg.text,
-                        'imageUrl': imageUrl,
+                        'name': txtcateg,
                       });
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            title: Text("Success",
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold)),
-                            content: Container(
-                              width: MediaQuery.of(context).size.width * 10,
-                              child: Text("Category updated successfully"),
-                            ),
-                            actions: <Widget>[
-                              InkWell(
-                                child: Text("OK ",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold)),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
                     } catch (x) {
                       print(x.toString());
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                          'An Error occurred please try again',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16),
+                        ),
+                        backgroundColor: Colors.red,
+                      ));
                     }
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF7E0000),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Text(
-                      'Update',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

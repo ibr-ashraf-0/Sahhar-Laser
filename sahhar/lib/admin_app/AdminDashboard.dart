@@ -1,6 +1,4 @@
-import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'AddCategory.dart';
@@ -100,7 +98,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                     ),
                                     Container(
                                       margin: const EdgeInsets.only(
-                                          left: 10, right: 0),
+                                          left: 10, right: 0, top: 15),
                                       child: Text(
                                         snapshot.data!.docs.length.toString(),
                                         style: const TextStyle(
@@ -284,17 +282,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               itemCount: 2,
                               itemBuilder: (cotext, index) {
                                 return Column(
-                                  children: [
-                                    Container(
-                                      color: Colors.amber,
-                                      child: Column(
-                                        children: [Text('Products'), Text('')],
-                                      ),
-                                    ),
-                                    Container(
-                                      color: Colors.red,
-                                    )
-                                  ],
+                                  children: [],
                                 );
                               },
                             ),
@@ -314,138 +302,79 @@ class _AdminDashboardState extends State<AdminDashboard> {
         ),
       ),
       drawer: Drawer(
+        backgroundColor: Colors.white,
         child: Column(
           children: [
-            Container(
-              height: 150,
-              child: DrawerHeader(
-                child: Row(
-                  children: const [
-                    Icon(Icons.supervised_user_circle),
-                    SizedBox(width: 10),
-                    Text(
-                      'Admin Dashboard',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF7E0000),
-                      ),
+            const SizedBox(
+              height: 40,
+            ),
+            SizedBox(
+              height: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Icon(Icons.supervised_user_circle),
+                  SizedBox(width: 10),
+                  Text(
+                    'Admin Dashboard',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF7E0000),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Categories()),
-                );
-              },
-              child: Container(
-                height: 70,
-                child: Row(
-                  children: const [
-                    SizedBox(width: 20),
-                    Text(
-                      'Categories',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color(0xFF7E0000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const Divider(
+              thickness: 1.5,
+              color: Color(0xFF7E0000),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddCategory()),
-                );
-              },
-              child: Container(
-                height: 70,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Text(
-                      'Add Category',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color(0xFF7E0000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Products()),
-                );
-              },
-              child: Container(
-                height: 70,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Text(
-                      'Products',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color(0xFF7E0000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddProduct()),
-                );
-              },
-              child: Container(
-                height: 70,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Text(
-                      'Add Product',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color(0xFF7E0000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                height: 70,
-                child: Row(
-                  children: [
-                    SizedBox(width: 20),
-                    Text(
-                      'Orders Schedule',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Color(0xFF7E0000),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            buildInkDrawer(context, const Categories(), 'Categories'),
+            buildInkDrawer(context, AddCategory(), 'Add Category'),
+            buildInkDrawer(context, const Products(), 'Products'),
+            buildInkDrawer(context, AddProduct(), 'Add Product'),
+            buildInkDrawer(context, const Categories(), 'Orders Schedule'),
           ],
+        ),
+      ),
+    );
+  }
+
+  Container buildInkDrawer(BuildContext ctx, Widget page, String title) {
+    return Container(
+      width: double.infinity,
+      height: 65,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF7E0000),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            ctx,
+            MaterialPageRoute(builder: (context) => page),
+          );
+        },
+        child: Container(
+          alignment: Alignment.centerLeft,
+          child: ListTile(
+            title: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+              ),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+              size: 35,
+            ),
+          ),
         ),
       ),
     );

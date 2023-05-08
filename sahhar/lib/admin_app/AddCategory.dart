@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +10,11 @@ class AddCategory extends StatefulWidget {
 }
 
 class _AddCategoryState extends State<AddCategory> {
-  final formKey = GlobalKey<FormState>();
   final txtcateg = TextEditingController();
-  late File imageFile;
+  final GlobalKey<FormState> formKey = GlobalKey();
+  XFile? _fileImage;
+  String? imageUrl;
+  ImagePicker picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -27,142 +28,178 @@ class _AddCategoryState extends State<AddCategory> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color(0xFF7E0000),
-        toolbarHeight: 100,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        )),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20),
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: SingleChildScrollView(
           child: Form(
             key: formKey,
             child: Column(
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: () async {
+                    final pickedImageFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (pickedImageFile != null) {
+                      _fileImage = XFile(pickedImageFile.path);
+                      final storage = FirebaseStorage.instance
+                          .ref()
+                          .child('categories')
+                          .child(_fileImage!.path.replaceAll('/', '_'));
+                      await storage
+                          .putFile(File(_fileImage!.path))
+                          .then((_) async {
+                        imageUrl = await storage.getDownloadURL();
+                        setState(() {});
+                      });
+                    } else {
+                      print('No Image Selcted');
+                    }
+                  },
+                  child: imageUrl != null
+                      ? Container(
+                          height: MediaQuery.of(context).size.height * 0.30,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(imageUrl.toString()),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: Colors.grey.shade300,
+                          // color: Colors.amber,
+                          height: MediaQuery.of(context).size.height * 0.30,
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  'No Image +',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  'Click Here to Add Catogry image',
+                                  style: TextStyle(fontSize: 16),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 30),
                 Container(
                   alignment: Alignment.centerLeft,
                   child: const Text(
-                    'Create Category',
+                    'Create Category...',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 24,
                       color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 15),
                 TextFormField(
                   controller: txtcateg,
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'plese enter a catogry name';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     labelText: 'Name of Category',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  /*validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return null; 
-                  },*/
                 ),
-                const SizedBox(height: 60),
-                InkWell(
-                  onTap: () async {
-                    ImagePicker imagePicker = ImagePicker();
-                    // use the getImage method on the instance to pick an image from the gallery
-                    var image = await imagePicker.getImage(
-                      source: ImageSource.gallery,
-                    );
-                    // set the image file to the state
-                    if (image != null) {
-                      setState(() {
-                        imageFile = File(image.path);
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 226, 224, 224),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.attach_file),
-                        SizedBox(width: 5),
-                        Text(
-                          'Choose Image',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 80),
-                InkWell(
-                  onTap: () async {
-                    try {
-                      // upload the image to Firebase Storage
-                      String imageUrl = '';
-                      if (imageFile != null) {
-                        final ref = FirebaseStorage.instance
-                            .ref()
-                            .child('categories/${DateTime.now().toString()}');
-                        await ref.putFile(imageFile);
-                        imageUrl = await ref.getDownloadURL();
-                      }
-
-                      // add the category to Firestore
-                      await FirebaseFirestore.instance
-                          .collection('categories')
-                          .add({
-                        'name': txtcateg.text,
-                        'imageUrl': imageUrl,
-                      });
-                     showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            title: Text("Success",
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold)),
-                            content: Container(
-                              width: MediaQuery.of(context).size.width * 10,
-                              child: Text("Category added successfully"),
-                            ),
-                            actions: <Widget>[
-                              InkWell(
-                                child: Text("OK  ",
+                const SizedBox(height: 50),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  child: RawMaterialButton(
+                    fillColor: const Color(0xFF7E0000),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    autofocus: true,
+                    onPressed: () async {
+                      if (formKey.currentState!.validate() &&
+                          imageUrl != null) {
+                        try {
+                          // add the category data to Firestore
+                          await FirebaseFirestore.instance
+                              .collection('categories')
+                              .doc(txtcateg.text)
+                              .set({
+                            'name': txtcateg.text,
+                            'imageUrl': imageUrl,
+                          });
+                          // ignore: use_build_context_synchronously
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                title: const Text("Success",
                                     style: TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 24,
                                         color: Colors.green,
                                         fontWeight: FontWeight.bold)),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } catch (x) {
-                      print(x.toString());
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7E0000),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
+                                content: SizedBox(
+                                  width: MediaQuery.of(context).size.width * 10,
+                                  child:
+                                      const Text("Category added successfully"),
+                                ),
+                                actions: <Widget>[
+                                  InkWell(
+                                    child: const Text("OK  ",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold)),
+                                    onTap: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ).then((value) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddCategory()),
+                            );
+                          });
+                        } catch (x) {
+                          print(x.toString());
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
+                            'please put image for your catogry',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          backgroundColor: Colors.red,
+                        ));
+                      }
+                    },
                     child: const Text(
                       'Create',
                       style: TextStyle(

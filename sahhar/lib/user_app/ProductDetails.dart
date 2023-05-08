@@ -30,8 +30,9 @@ class ProductDetails extends StatefulWidget {
 class ProductDetailsState extends State<ProductDetails> {
   bool isFavorite = false;
   bool isCart = false;
-  String currentSizeIndex = '25 C';
+
   String nameInProduct = '';
+  String currentSizeIndex = '25 C';
   List<String> itemSize = [
     '5 C',
     '10 C',

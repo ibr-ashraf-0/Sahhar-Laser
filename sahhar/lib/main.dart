@@ -39,7 +39,6 @@ class _SahharAppState extends State<SahharApp> {
     CartPage(),
     const AccontInfo(),
   ];
-
   int _curntInedx = 0;
 
   void _onItemTapped(int index) {

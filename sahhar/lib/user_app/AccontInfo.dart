@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../auth_screens/LoginPage.dart';
-import '../widget/NavBar.dart';
 
 class AccontInfo extends StatelessWidget {
   const AccontInfo({super.key});

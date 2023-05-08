@@ -231,6 +231,7 @@ class LoginPageState extends State<LoginPage> {
                       loginData['email'] = value;
                     },
                     cursorColor: const Color(0xFF7E0000),
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(
                         Icons.person,
@@ -305,8 +306,8 @@ class LoginPageState extends State<LoginPage> {
                         signwith(loginData['email'], loginData['password']);
                       },
                       child: Container(
-                        width: 170,
-                        height: 50,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(25),
@@ -314,13 +315,16 @@ class LoginPageState extends State<LoginPage> {
                         child: const Center(
                           child: Text(
                             'LOGIN',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   InkWell(
                     onTap: () {
                       Navigator.push(
