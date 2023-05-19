@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sahhar/main.dart';
-import 'package:sahhar/user_app/Home.dart';
 import '../admin_app/AdminDashboard.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'Resetpsw.dart';
@@ -119,6 +117,8 @@ class LoginPageState extends State<LoginPage> {
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
+        'phoneNumber': '',
+        "pass": '',
         "Firstname": user?.displayName,
         'userId': FirebaseAuth.instance.currentUser!.uid,
         'Lastname': '',
@@ -354,10 +354,10 @@ class LoginPageState extends State<LoginPage> {
                             if (value != null) {
                               return;
                             } else {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomePage()),
+                                    builder: (context) => SahharApp()),
                               );
                             }
                           },

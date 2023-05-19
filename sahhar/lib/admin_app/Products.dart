@@ -88,9 +88,11 @@ class _ProductsState extends State<Products> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Center(
+                                  Container(
+                                    height: 40,
                                     child: Text(
                                       doc['name'].toString().toUpperCase(),
+                                      overflow: TextOverflow.fade,
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w400,
@@ -114,8 +116,6 @@ class _ProductsState extends State<Products> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       EditProduct(
-                                                        // categoryId:
-                                                        //     doc['categories'],
                                                         productId: doc.id,
                                                       )),
                                             );

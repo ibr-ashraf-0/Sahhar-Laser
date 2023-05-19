@@ -232,6 +232,7 @@ class _SignUpState extends State<SignUp> {
                     TextField(
                       onChanged: (value) => userData['email'] = value,
                       cursorColor: const Color(0xFF7E0000),
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.email,
@@ -377,7 +378,6 @@ class _SignUpState extends State<SignUp> {
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          // height: 50,
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           decoration: BoxDecoration(
                             color: const Color(0xFF7E0000).withOpacity(0.6),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../main.dart';
 
 class confirm extends StatelessWidget {
@@ -72,7 +71,7 @@ class confirm extends StatelessWidget {
                           const Color(0xFF7E0000).withOpacity(0.1)),
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => SahharApp()),
                       );

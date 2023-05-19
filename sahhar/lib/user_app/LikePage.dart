@@ -54,16 +54,22 @@ class _LikePageState extends State<LikePage> {
               .collection('likes')
               .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData &&
-                snapshot.connectionState != ConnectionState.done) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
                   color: Color(0xFF7E0000),
                 ),
               );
-            } else if (snapshot.data!.docs.isEmpty) {
+            } else if (snapshot.data!.docs.length == 0 &&
+                snapshot.connectionState != ConnectionState.waiting) {
               return const Center(
-                child: Text('No likes yet.'),
+                child: Text(
+                  'No likes yet.',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w300),
+                ),
               );
             } else {
               return ListView.builder(
@@ -83,7 +89,7 @@ class _LikePageState extends State<LikePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Image.network(
-                            productDetails['imageUrl'],
+                            productDetails['imageUrl'][0],
                             height: MediaQuery.of(context).size.height * 0.11,
                             width: MediaQuery.of(context).size.width * 0.42,
                             fit: BoxFit.fill,
@@ -114,7 +120,7 @@ class _LikePageState extends State<LikePage> {
                                 ),
                               ),
                               Text(
-                                '${productDetails['price']} ₪',
+                                '${productDetails['price'][0]} ₪',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -125,15 +131,40 @@ class _LikePageState extends State<LikePage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        IconButton(
-                          onPressed: () {
-                            // Add to cart function
-                          },
-                          icon: const Icon(
-                            Icons.shopping_cart_outlined,
-                            color: Colors.black,
-                          ),
-                        ),
+                        FutureBuilder(
+                            future: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user!.uid)
+                                .collection('cart')
+                                .doc(snapshot.data!.docs[index].id)
+                                .get(),
+                            builder: (ctx, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return GestureDetector(
+                                  child: Icon(
+                                    snapshot.data!.data()?['isCart'] == true
+                                        ? Icons.shopping_cart
+                                        : Icons.shopping_cart_outlined,
+                                    color: const Color(0xFF7E0000),
+                                  ),
+                                  onTap: () async {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                            backgroundColor: Colors.red,
+                                            content: Text(
+                                              'you cant add product to cart from here plese go to product details to add it',
+                                              textAlign: TextAlign.center,
+                                            )));
+                                  },
+                                );
+                              } else {
+                                return const Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: Color(0xFF7E0000),
+                                );
+                              }
+                            }),
                         IconButton(
                           onPressed: () {
                             deleteProduct(productDetails.id);

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'confirm.dart';
 
@@ -11,7 +12,11 @@ class Checkout extends StatefulWidget {
 
 class CheckoutState extends State<Checkout> {
   bool payNow = false;
-  bool payOnDelivery = false;
+  bool payOnDelivery = true;
+  String nameInProduct = '';
+
+  int totalPrice = 0;
+  int orderCont = 0;
   final user = FirebaseAuth.instance.currentUser;
   Future<void> placeOrder() async {
     QuerySnapshot<Map<String, dynamic>> orderInfo = await FirebaseFirestore
@@ -25,7 +30,11 @@ class CheckoutState extends State<Checkout> {
         .collection('users')
         .doc(user!.uid)
         .get();
-
+    if (orderCont == 0) {
+      setState(() {
+        orderCont = orderInfo.docs.length;
+      });
+    }
     orderInfo.docs.forEach((element) async {
       showDialog(
         context: context,
@@ -64,12 +73,15 @@ class CheckoutState extends State<Checkout> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
-                          Text(
-                            '${element.data()['name']}',
-                            style: const TextStyle(
-                                color: Color(0xFF7E0000),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
+                          Container(
+                            width: 160,
+                            child: Text(
+                              '${element.data()['name']}',
+                              style: const TextStyle(
+                                  color: Color(0xFF7E0000),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),
@@ -150,7 +162,7 @@ class CheckoutState extends State<Checkout> {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            '${element.data()['colorUrl']}',
+                            '${element.data()['colorName']}',
                             style: const TextStyle(
                                 color: Color(0xFF7E0000),
                                 fontSize: 18,
@@ -159,33 +171,49 @@ class CheckoutState extends State<Checkout> {
                         ],
                       ),
                     ),
-                    element.data()['nameInProduct'] != ''
+                    element.data()['switchValue'] == true
                         ? Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 4, vertical: 2),
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            child: const Text(
+                              'You Can write a name here to put it in your product',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          )
+                        : const SizedBox(
+                            height: 0,
+                            width: 0,
+                          ),
+                    element.data()['switchValue'] == true
+                        ? Container(
+                            margin: EdgeInsets.zero,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 8),
-                            decoration: BoxDecoration(
-                                border: const Border.fromBorderSide(
-                                    BorderSide(width: 1.5)),
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'Name in product : ',
-                                  style: TextStyle(
+                                horizontal: 8, vertical: 4),
+                            child: TextFormField(
+                              onChanged: (value) {
+                                nameInProduct = value;
+                              },
+                              cursorColor: const Color(0xFF7E0000),
+                              decoration: InputDecoration(
+                                labelStyle: const TextStyle(
+                                  color: Color(0xFF7E0000),
+                                ),
+                                labelText: "Name in product",
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: const BorderSide(
                                       color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                      width: 1.5,
+                                    )),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF7E0000),
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                Text(
-                                  '${element.data()['nameInProduct']}',
-                                  style: const TextStyle(
-                                      color: Color(0xFF7E0000),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                              ),
                             ),
                           )
                         : const SizedBox(height: 0, width: 0),
@@ -234,24 +262,37 @@ class CheckoutState extends State<Checkout> {
           );
         },
       ).then((value) async {
-        if (value == true || value != null) {
-          print('vale is = $value');
+        if (value == true) {
+          DateTime date = DateTime.now();
+          String dateFormat = DateFormat('dd-MM-yyyy hh:mm').format(date);
           await FirebaseFirestore.instance
-              .collection('order')
-              .doc(DateTime.now().toString())
+              .collection('orderStates')
+              .doc(user!.uid)
               .set({
-            'userId': user!.uid,
             'email': user!.email,
+            'number': userInfo.data()?['phoneNumber'],
             'userName': userInfo.data()?['Firstname'] +
                 ' ' +
                 userInfo.data()?['Lastname'],
+            'totalprice': totalPrice,
+            'orderDate': dateFormat,
+            'packageStutes': 'Ordered',
+            'countOfOrders': orderCont,
+          });
+          await FirebaseFirestore.instance
+              .collection('order')
+              .doc(user!.uid)
+              .collection('items')
+              .add({
+            'nameInProduct': nameInProduct,
             'productName': element.data()['name'],
-            'color': element.data()['colorUrl'],
-            'imageUrl': element.data()['imageUrl'],
+            'color': element.data()['colorurl'],
+            'colorName': element.data()['colorName'],
+            'colorType': element.data()['colorType'],
             'price': element.data()['price'],
             'size': element.data()['size'],
-            'orderStutes': 'Ordered',
           });
+
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user?.uid)
@@ -259,8 +300,7 @@ class CheckoutState extends State<Checkout> {
               .get()
               .then((snapshot) {
             for (DocumentSnapshot doc in snapshot.docs) {
-              if ((doc.id == element.data()['name']) && value) {
-                print(doc.id);
+              if ((doc['name'] == element.data()['name']) && value) {
                 doc.reference.delete();
               } else {
                 print('not the product alrit');
@@ -357,7 +397,7 @@ class CheckoutState extends State<Checkout> {
                                           borderRadius:
                                               BorderRadius.circular(15),
                                           child: Image.network(
-                                            document['imageUrl'],
+                                            document['imageUrl'][0],
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -487,14 +527,16 @@ class CheckoutState extends State<Checkout> {
                                 ),
                               );
                             }
-                            var totalPrice = 0;
-                            for (var doc in snapshot.data!.docs) {
-                              var priceStr = doc['price'] as String;
-                              var price = int.tryParse(
-                                      priceStr.replaceAll('₪', '').trim()) ??
-                                  0;
-                              totalPrice += price;
+                            if (totalPrice == 0) {
+                              for (var doc in snapshot.data!.docs) {
+                                var priceStr = doc['price'] as String;
+                                var price = int.tryParse(
+                                        priceStr.replaceAll('₪', '').trim()) ??
+                                    0;
+                                totalPrice += price;
+                              }
                             }
+
                             return Text(
                               '$totalPrice ₪  ',
                               style: const TextStyle(
@@ -540,12 +582,7 @@ class CheckoutState extends State<Checkout> {
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 child: RawMaterialButton(
                   onPressed: () {
-                    placeOrder().whenComplete(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => confirm()),
-                      );
-                    });
+                    placeOrder();
                   },
                   fillColor: const Color(0xFF7E0000),
                   shape: RoundedRectangleBorder(

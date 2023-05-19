@@ -37,7 +37,7 @@ class _SahharAppState extends State<SahharApp> {
     const HomePage(),
     const LikePage(),
     CartPage(),
-    const AccontInfo(),
+    AccontInfo(),
   ];
   int _curntInedx = 0;
 

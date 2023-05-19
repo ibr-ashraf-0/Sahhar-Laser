@@ -51,6 +51,8 @@ dependencies:
   url_launcher: ^6.1.10
   percent_indicator: ^4.2.3
   marquee: ^2.2.3
+  intl: ^0.18.1
+  flutter_launcher_icons: ^0.13.1
   
 
 
@@ -64,6 +66,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  image_path: "assets/localLogo.png"
+  android: true
+  ios: true    
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

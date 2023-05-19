@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sahhar/admin_app/Products.dart';
 import 'dart:io';
 
 import '../widget/chooseColor.dart';
@@ -21,18 +22,19 @@ class EditProduct extends StatefulWidget {
 class EditProductState extends State<EditProduct> {
   final txtname = TextEditingController();
   final txtdescri = TextEditingController();
-  List<bool> selectedCategory = [];
-  // ----------------------------------
+  String? baseCateogry;
+  String productId = '';
   String productName = '';
+  String oldName = '';
   String productDescription = '';
-  List<String> categories = [];
-  String? dropCatogryValue;
+  String categoryName = '';
   List<String> oldSizes = [];
   List<String> oldPrices = [];
+  List<String> productSizes = [];
+  List<String> productPrices = [];
   final formKey = GlobalKey<FormState>();
-  int lenghtOfFiled = 1;
-  List<TextEditingController> sizeController = [];
-  List<String> imagesUrls = [];
+  int lenghtOfFiled = 0;
+  List<String> imagesurl = [];
   List<String> imagesPath = [];
   XFile? _fileImage;
   ImagePicker picker = ImagePicker();
@@ -50,7 +52,7 @@ class EditProductState extends State<EditProduct> {
 
       await storage.putFile(File(_fileImage!.path)).then((_) async {
         String url = await storage.getDownloadURL();
-        imagesUrls.add(url);
+        imagesurl.add(url);
         imagesPath.add(pickedImageFile.path.replaceAll('/', '_'));
         setState(() {});
       });
@@ -59,33 +61,21 @@ class EditProductState extends State<EditProduct> {
     }
   }
 
-  // fetch categories data from Firebase
-  Future<List<String>> fetchCategories() async {
-    QuerySnapshot snapshot = await firestore.collection("categories").get();
-    for (var doc in snapshot.docs) {
-      categories.add(doc['name']);
-    }
-    return categories;
-  }
-
   @override
   void initState() {
     super.initState();
-    fetchCategories().then((value) {
-      setState(() {
-        categories = value;
-        selectedCategory = List<bool>.filled(categories.length, false);
-      });
-    });
     FirebaseFirestore.instance
         .collection('products')
         .doc(widget.productId)
         .get()
         .then((docSnapshot) {
       if (docSnapshot.exists) {
+        baseCateogry = docSnapshot.data()!['baseCategory'];
         txtname.text = docSnapshot.data()!['name'];
+        oldName = docSnapshot.data()!['name'];
         txtdescri.text = docSnapshot.data()!['description'];
         oldSizes = List.from(docSnapshot.data()!['size']);
+        lenghtOfFiled = oldSizes.length;
         oldPrices = List.from(docSnapshot.data()!['price']);
         choosesRegulerColor = List.from(docSnapshot.data()!['regulerColor']);
         choosesRegulerNameColor =
@@ -93,8 +83,18 @@ class EditProductState extends State<EditProduct> {
         choosesWoodsColor = List.from(docSnapshot.data()!['woodColors']);
         choosesWoodsNameColor = List.from(docSnapshot.data()!['woodNames']);
         switchValue = docSnapshot.data()!['switchValue'];
-        imagesUrls = List.from(docSnapshot.data()!['imageUrl']);
+        imagesurl = List.from(docSnapshot.data()!['imageUrl']);
       }
+    }).whenComplete(() {
+      FirebaseFirestore.instance
+          .collection('categories')
+          .doc(baseCateogry)
+          .get()
+          .then((value) {
+        setState(() {
+          categoryName = value.data()!['name'];
+        });
+      });
     });
   }
 
@@ -134,7 +134,7 @@ class EditProductState extends State<EditProduct> {
                     Container(
                       alignment: Alignment.centerLeft,
                       child: const Text(
-                        'Update Product Catogry:',
+                        'Product Catogry is',
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.black,
@@ -150,50 +150,39 @@ class EditProductState extends State<EditProduct> {
                         color: const Color(0xFF7E0000),
                       ),
                       padding: EdgeInsets.zero,
-                      child: DropdownButton<String>(
-                        underline: Container(),
-                        alignment: Alignment.center,
-                        iconEnabledColor: Colors.white,
-                        dropdownColor: const Color(0xFF7E0000).withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(15),
-                        elevation: 2,
-                        value: dropCatogryValue,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                        hint: Container(
-                          margin: const EdgeInsets.only(left: 5),
-                          child: const Text(
-                            'Choose catogry',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            dropCatogryValue = value!;
-                          });
-                        },
-                        items: categories
-                            .map<DropdownMenuItem<String>>((String cat) {
-                          return DropdownMenuItem<String>(
-                            value: cat,
-                            child: Text(cat),
-                          );
-                        }).toList(),
-                      ),
+                      child: Center(
+                          child: Text(
+                        categoryName,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 22),
+                      )),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: txtname,
+                  onSaved: (val) {
+                    productName = val!;
+                  },
                   key: const ValueKey('name'),
+                  cursorColor: const Color(0xFF7E0000),
                   decoration: InputDecoration(
+                    labelStyle: const TextStyle(
+                      color: Color(0xFF7E0000),
+                    ),
                     labelText: 'Name of Product',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Color(0xFF7E0000),
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   validator: (value) {
@@ -206,11 +195,27 @@ class EditProductState extends State<EditProduct> {
                 const SizedBox(height: 15),
                 TextFormField(
                   controller: txtdescri,
+                  onSaved: (val) {
+                    productDescription = val!;
+                  },
                   key: const ValueKey('description'),
+                  cursorColor: const Color(0xFF7E0000),
                   decoration: InputDecoration(
+                    labelStyle: const TextStyle(
+                      color: Color(0xFF7E0000),
+                    ),
                     labelText: 'Description',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Color(0xFF7E0000),
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   validator: (value) {
@@ -223,11 +228,13 @@ class EditProductState extends State<EditProduct> {
                 const SizedBox(height: 15),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: oldSizes.length * 75,
+                  height: lenghtOfFiled != oldSizes.length
+                      ? lenghtOfFiled * 75
+                      : oldSizes.length * 75,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   color: const Color.fromARGB(179, 248, 220, 220),
                   child: ListView.builder(
-                    itemCount: oldSizes.length,
+                    itemCount: lenghtOfFiled,
                     itemBuilder: (context, index) {
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,12 +247,14 @@ class EditProductState extends State<EditProduct> {
                                     MediaQuery.of(context).size.width * 0.459,
                                 height: 65,
                                 child: TextFormField(
-                                  initialValue: oldSizes[index],
-                                  // onSaved: (val) {
-                                  //   setState(() {
-                                  //     // productSizes.add(val.toString());
-                                  //   });
-                                  // },
+                                  initialValue: lenghtOfFiled > oldSizes.length
+                                      ? ''
+                                      : oldSizes[index],
+                                  onSaved: (val) {
+                                    setState(() {
+                                      productSizes.add(val.toString());
+                                    });
+                                  },
                                   key: const ValueKey('size'),
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
@@ -289,10 +298,12 @@ class EditProductState extends State<EditProduct> {
                                     MediaQuery.of(context).size.width * 0.459,
                                 height: 65,
                                 child: TextFormField(
-                                  initialValue: oldPrices[index],
+                                  initialValue: lenghtOfFiled > oldSizes.length
+                                      ? ''
+                                      : oldPrices[index],
                                   onSaved: (val) {
                                     setState(() {
-                                      // productPrices.add(val.toString());
+                                      productPrices.add(val.toString());
                                     });
                                   },
                                   key: const ValueKey('price'),
@@ -440,7 +451,7 @@ class EditProductState extends State<EditProduct> {
                         ],
                       ),
                     ]),
-                imagesUrls.isNotEmpty
+                imagesurl.isNotEmpty
                     ? Container(
                         margin: const EdgeInsets.only(top: 15),
                         width: MediaQuery.of(context).size.width,
@@ -451,7 +462,7 @@ class EditProductState extends State<EditProduct> {
                           width: MediaQuery.of(context).size.width,
                           height: 75,
                           child: ListView.builder(
-                              itemCount: imagesUrls.length,
+                              itemCount: imagesurl.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 return Container(
@@ -460,10 +471,10 @@ class EditProductState extends State<EditProduct> {
                                   width: 60,
                                   height: 65,
                                   decoration: BoxDecoration(
-                                    image: imagesUrls.isNotEmpty
+                                    image: imagesurl.isNotEmpty
                                         ? DecorationImage(
                                             image:
-                                                NetworkImage(imagesUrls[index]),
+                                                NetworkImage(imagesurl[index]),
                                             fit: BoxFit.fill,
                                           )
                                         : null,
@@ -472,8 +483,8 @@ class EditProductState extends State<EditProduct> {
                                   child: InkWell(
                                     onTap: () {
                                       setState(() {
-                                        imagesUrls.removeWhere((element) =>
-                                            element == imagesUrls[index]);
+                                        imagesurl.removeWhere((element) =>
+                                            element == imagesurl[index]);
                                         FirebaseStorage.instance
                                             .ref()
                                             .child('products')
@@ -502,116 +513,121 @@ class EditProductState extends State<EditProduct> {
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: InkWell(
                     onTap: () async {
-                      try {
-                        // upload the image to Firebase Storage
-                        // String imageUrl = '';
-                        // if (_fileImage != null) {
-                        //   final ref = FirebaseStorage.instance
-                        //       .ref()
-                        //       .child('products/${DateTime.now().toString()}');
-                        //   await ref.putFile(_fileImage!.path as File);
-                        //   imageUrl = await ref.getDownloadURL();
-                        // }
+                      final isValid = formKey.currentState!.validate();
+                      if (isValid && imagesurl.isNotEmpty) {
+                        formKey.currentState!.save();
 
-                        // // upload the image to Firebase Storage
-                        // String colorUrl = '';
-                        // // if ( != null) {
-                        //   final ref = FirebaseStorage.instance
-                        //       .ref()
-                        //       .child('products/${DateTime.now().toString()}');
-                        //   await ref.putFile(colorFile);
-                        //   colorUrl = await ref.getDownloadURL();
-                        // }
-
-                        // Save product information to the "products" collection
-                        await FirebaseFirestore.instance
-                            .collection("products")
-                            .doc(widget.productId)
-                            .set({
-                          "name": txtname.text,
-                          "description": txtdescri.text,
-                          // "size": txtsize!.text,
-                          // "price": txtprice!.text,
-                          // 'imageUrl': imageUrl,
-                          // 'colorUrl': colorUrl,
-                          "switchValue": switchValue,
-                          "categories": selectedCategory
-                              .asMap()
-                              .entries
-                              .where((entry) => entry.value == true)
-                              .map((entry) => categories[entry.key])
-                              .toList(),
-                        });
-
-                        // Save product information to the selected categories
-                        List<String> selectedCategories = selectedCategory
-                            .asMap()
-                            .entries
-                            .where((entry) => entry.value == true)
-                            .map((entry) => categories[entry.key])
-                            .toList();
-
-                        for (String selectedCategory in selectedCategories) {
-                          QuerySnapshot snapshot = await FirebaseFirestore
-                              .instance
+                        try {
+                          // Save product information to the "products" collection
+                          await FirebaseFirestore.instance
+                              .collection("products")
+                              .doc(widget.productId)
+                              .update({
+                            "baseCategory": baseCateogry,
+                            "name": productName,
+                            "description": productDescription,
+                            "size": productSizes,
+                            "price": productPrices,
+                            'regulerColor': choosesRegulerColor,
+                            'regulerNames': choosesRegulerNameColor,
+                            'woodColors': choosesWoodsColor,
+                            'woodNames': choosesWoodsNameColor,
+                            'imageUrl': imagesurl,
+                            "switchValue": switchValue,
+                          });
+                          var firebase = await FirebaseFirestore.instance
                               .collection("categories")
-                              .where("name", isEqualTo: selectedCategory)
+                              .doc(baseCateogry)
+                              .collection('items')
                               .get();
-
-                          if (snapshot.docs.length > 0) {
-                            String categoryId = snapshot.docs[0].id;
-
-                            await FirebaseFirestore.instance
-                                .collection("categories")
-                                .doc(categoryId)
-                                .collection("items")
-                                .doc(widget.productId)
-                                .update({
-                              "name": txtname!.text,
-                              "description": txtdescri!.text,
-                              // "size": txtsize!.text,
-                              // "price": txtprice!.text,
-                              // 'imageUrl': imageUrl,
-                              // 'colorUrl': colorUrl,
-                              "switchValue": switchValue,
-                            });
-                          }
-                        }
-
-                        // ignore: use_build_context_synchronously
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              title: const Text("Success",
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.bold)),
-                              content: SizedBox(
-                                width: MediaQuery.of(context).size.width * 10,
-                                child:
-                                    const Text("Product updated successfully"),
-                              ),
-                              actions: <Widget>[
-                                InkWell(
-                                  child: const Text("OK  ",
+                          var productData = firebase.docs.where((element) {
+                            if (element.data()['name'] == oldName) {
+                              setState(() {
+                                productId = element.id;
+                              });
+                              return true;
+                            } else {
+                              print('false');
+                              return false;
+                            }
+                          });
+                          // dont delet this line, this for active the setState in top
+                          print('${productData.isEmpty}');
+                          // Save product information to the selected categories
+                          await FirebaseFirestore.instance
+                              .collection("categories")
+                              .doc(baseCateogry)
+                              .collection('items')
+                              .doc(productId)
+                              .update({
+                            'baseCategory': baseCateogry,
+                            "name": productName,
+                            "description": productDescription,
+                            "size": productSizes,
+                            "price": productPrices,
+                            'regulerColor': choosesRegulerColor,
+                            'regulerNames': choosesRegulerNameColor,
+                            'woodColors': choosesWoodsColor,
+                            'woodNames': choosesWoodsNameColor,
+                            'imageUrl': imagesurl,
+                            "switchValue": switchValue,
+                          }).then((value) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  title: const Text("Success",
                                       style: TextStyle(
-                                          fontSize: 22,
+                                          fontSize: 24,
                                           color: Colors.green,
                                           fontWeight: FontWeight.bold)),
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } catch (x) {
-                        print(x.toString());
+                                  content: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 10,
+                                    child: const Text(
+                                        "Product added successfully"),
+                                  ),
+                                  actions: <Widget>[
+                                    InkWell(
+                                      child: const Text("OK  ",
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold)),
+                                      onTap: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ).then((value) {
+                              if (value == true || value != null) {
+                                setState(() {});
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Products()),
+                                );
+                              }
+                            });
+                          });
+                        } catch (e) {
+                          print(e.toString());
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
+                            'An Error occurred check you are enter all field and you choses a catogry',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          backgroundColor: Colors.red,
+                        ));
                       }
                     },
                     child: Container(

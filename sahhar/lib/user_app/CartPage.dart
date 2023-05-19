@@ -60,7 +60,13 @@ class _CartPageState extends State<CartPage> {
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: const Center(
-                child: Text('Cart empty.'),
+                child: Text(
+                  'Cart empty.',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w300),
+                ),
               ),
             );
           } else {
@@ -96,7 +102,7 @@ class _CartPageState extends State<CartPage> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: Image.network(
-                                  productDetails['imageUrl'],
+                                  productDetails['imageUrl'][0],
                                   width:
                                       MediaQuery.of(context).size.width * 0.38,
                                   height:
@@ -141,15 +147,41 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                               const SizedBox(width: 16),
-                              IconButton(
-                                onPressed: () {
-                                  // Add to cart function
-                                },
-                                icon: const Icon(
-                                  Icons.shopping_cart_outlined,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              FutureBuilder(
+                                  future: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(user!.uid)
+                                      .collection('cart')
+                                      .doc(snapshot.data!.docs[index].id)
+                                      .get(),
+                                  builder: (ctx, snapshote) {
+                                    if (snapshote.connectionState ==
+                                        ConnectionState.done) {
+                                      return IconButton(
+                                        icon: Icon(
+                                          snapshote.data!.data()?['isCart'] ==
+                                                  true
+                                              ? Icons.shopping_cart
+                                              : Icons.shopping_cart_outlined,
+                                          color: const Color(0xFF7E0000),
+                                        ),
+                                        onPressed: () async {
+                                          await FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(user!.uid)
+                                              .collection('cart')
+                                              .doc(
+                                                  snapshot.data!.docs[index].id)
+                                              .delete();
+                                        },
+                                      );
+                                    } else {
+                                      return const Icon(
+                                        Icons.shopping_cart_outlined,
+                                        color: Color(0xFF7E0000),
+                                      );
+                                    }
+                                  }),
                               IconButton(
                                 onPressed: () {
                                   deleteCartProduct(productDetails.id);

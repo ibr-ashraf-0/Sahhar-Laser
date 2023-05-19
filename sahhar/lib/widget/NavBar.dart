@@ -68,7 +68,7 @@ class _NavBarState extends State<NavBar> {
         } else if (index == 3) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const AccontInfo()),
+            MaterialPageRoute(builder: (context) => AccontInfo()),
           );
           _onItemTapped(index);
         }
