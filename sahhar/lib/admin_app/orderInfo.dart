@@ -114,6 +114,26 @@ class _OrdernfoState extends State<Ordernfo> {
                                     )
                                   ],
                                 ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Quantity : ',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(
+                                      child: Text(
+                                        '${snapshot.data!.docs[index]['quantity']}',
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    )
+                                  ],
+                                ),
                                 const SizedBox(
                                   height: 10,
                                 ),

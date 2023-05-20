@@ -107,7 +107,7 @@ class _CartPageState extends State<CartPage> {
                                       MediaQuery.of(context).size.width * 0.38,
                                   height:
                                       MediaQuery.of(context).size.height * 0.12,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               const SizedBox(width: 16),

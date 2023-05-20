@@ -30,11 +30,6 @@ class ProductDetailsState extends State<ProductDetails> {
   int indexOfpriceSize = 0;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -144,6 +139,7 @@ class ProductDetailsState extends State<ProductDetails> {
                                 Row(
                                   children: [
                                     FloatingActionButton(
+                                      heroTag: "btn1",
                                       elevation: 0,
                                       backgroundColor: Colors.grey,
                                       onPressed: () {
@@ -166,6 +162,7 @@ class ProductDetailsState extends State<ProductDetails> {
                                           fontSize: 18),
                                     ),
                                     FloatingActionButton(
+                                        heroTag: "btn2",
                                         elevation: 0,
                                         backgroundColor: Colors.green,
                                         onPressed: () {

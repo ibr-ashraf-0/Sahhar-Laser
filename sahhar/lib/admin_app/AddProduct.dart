@@ -553,88 +553,92 @@ class AddProductState extends State<AddProduct> {
                         dropCatogryValue != null) {
                       formKey.currentState!.save();
                       int catogryIndex = categories.indexOf(dropCatogryValue!);
-                      try {
-                        // Save product information to the "products" collection
-                        await FirebaseFirestore.instance
-                            .collection("products")
-                            .add({
-                          "baseCategory": categoriesId[catogryIndex],
-                          "name": productName,
-                          "description": productDescription,
-                          "size": productSizes,
-                          "price": productPrices,
-                          'regulerColor': choosesRegulerColor,
-                          'regulerNames': choosesRegulerNameColor,
-                          'woodColors': choosesWoodsColor,
-                          'woodNames': choosesWoodsNameColor,
-                          'imageUrl': imagesurl,
-                          "switchValue": switchValue,
-                        });
-
-                        // Save product information to the selected categories
-                        await FirebaseFirestore.instance
-                            .collection("categories")
-                            .doc(categoriesId[catogryIndex])
-                            .collection('items')
-                            .add({
-                          'baseCategory': categoriesId[catogryIndex],
-                          "name": productName,
-                          "description": productDescription,
-                          "size": productSizes,
-                          "price": productPrices,
-                          'regulerColor': choosesRegulerColor,
-                          'regulerNames': choosesRegulerNameColor,
-                          'woodColors': choosesWoodsColor,
-                          'woodNames': choosesWoodsNameColor,
-                          'imageUrl': imagesurl,
-                          "switchValue": switchValue,
-                        }).then((value) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                title: const Text("Success",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold)),
-                                content: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 10,
-                                  child:
-                                      const Text("Product added successfully"),
-                                ),
-                                actions: <Widget>[
-                                  InkWell(
-                                    child: const Text("OK  ",
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold)),
-                                    onTap: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          ).then((value) {
-                            if (value == true || value != null) {
-                              choosesRegulerColor.clear();
-                              choosesRegulerNameColor.clear();
-                              choosesWoodsColor.clear();
-                              choosesWoodsNameColor.clear();
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AddProduct()),
-                              );
-                            }
+                      if (productPrices.isNotEmpty && productSizes.isNotEmpty) {
+                        try {
+                          // Save product information to the "products" collection
+                          await FirebaseFirestore.instance
+                              .collection("products")
+                              .add({
+                            "baseCategory": categoriesId[catogryIndex],
+                            "name": productName,
+                            "description": productDescription,
+                            "size": productSizes,
+                            "price": productPrices,
+                            'regulerColor': choosesRegulerColor,
+                            'regulerNames': choosesRegulerNameColor,
+                            'woodColors': choosesWoodsColor,
+                            'woodNames': choosesWoodsNameColor,
+                            'imageUrl': imagesurl,
+                            "switchValue": switchValue,
                           });
-                        });
-                      } catch (e) {
-                        print(e.toString());
+
+                          // Save product information to the selected categories
+                          await FirebaseFirestore.instance
+                              .collection("categories")
+                              .doc(categoriesId[catogryIndex])
+                              .collection('items')
+                              .add({
+                            'baseCategory': categoriesId[catogryIndex],
+                            "name": productName,
+                            "description": productDescription,
+                            "size": productSizes,
+                            "price": productPrices,
+                            'regulerColor': choosesRegulerColor,
+                            'regulerNames': choosesRegulerNameColor,
+                            'woodColors': choosesWoodsColor,
+                            'woodNames': choosesWoodsNameColor,
+                            'imageUrl': imagesurl,
+                            "switchValue": switchValue,
+                          }).then((value) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                  title: const Text("Success",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold)),
+                                  content: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 10,
+                                    child: const Text(
+                                        "Product added successfully"),
+                                  ),
+                                  actions: <Widget>[
+                                    InkWell(
+                                      child: const Text("OK  ",
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold)),
+                                      onTap: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ).then((value) {
+                              if (value == true || value != null) {
+                                choosesRegulerColor.clear();
+                                choosesRegulerNameColor.clear();
+                                choosesWoodsColor.clear();
+                                choosesWoodsNameColor.clear();
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddProduct()),
+                                );
+                              }
+                            });
+                          });
+                        } catch (e) {
+                          print(e.toString());
+                        }
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

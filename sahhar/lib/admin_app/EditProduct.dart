@@ -475,7 +475,7 @@ class EditProductState extends State<EditProduct> {
                                         ? DecorationImage(
                                             image:
                                                 NetworkImage(imagesurl[index]),
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.cover,
                                           )
                                         : null,
                                   ),

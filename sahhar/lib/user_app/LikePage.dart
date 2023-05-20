@@ -92,7 +92,7 @@ class _LikePageState extends State<LikePage> {
                             productDetails['imageUrl'][0],
                             height: MediaQuery.of(context).size.height * 0.11,
                             width: MediaQuery.of(context).size.width * 0.42,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const SizedBox(width: 16),

@@ -423,7 +423,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (ctx, index) {
                                 return Container(
-                                  height: 80,
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 4, vertical: 4),
                                   padding: const EdgeInsets.all(4),
@@ -433,52 +432,42 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                   child: Column(
                                     children: [
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'Users name : ',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                              Text(
-                                                snapshot.data!.docs[index]
-                                                    ['userName'],
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ],
+                                          const Text(
+                                            'Users name : ',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300),
                                           ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                'number : ',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                              Text(
-                                                snapshot.data!.docs[index]
-                                                        ['userNumber'] ??
-                                                    '',
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ],
-                                          )
+                                          Text(
+                                            snapshot.data!.docs[index]
+                                                ['userName'],
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            'number : ',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300),
+                                          ),
+                                          Text(
+                                            snapshot.data!.docs[index]
+                                                    ['userNumber'] ??
+                                                '',
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300),
+                                          ),
                                         ],
                                       ),
                                       SizedBox(

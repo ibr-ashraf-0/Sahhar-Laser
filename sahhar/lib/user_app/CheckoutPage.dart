@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'confirm.dart';
-
 class Checkout extends StatefulWidget {
   @override
   CheckoutState createState() => CheckoutState();
@@ -111,6 +109,38 @@ class CheckoutState extends State<Checkout> {
                                 color: Color(0xFF7E0000),
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
+                      decoration: BoxDecoration(
+                          border: const Border.fromBorderSide(
+                              BorderSide(width: 1.5)),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Quantity : ',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                            width: 160,
+                            child: Text(
+                              '${element.data()['quantity']}',
+                              style: const TextStyle(
+                                  color: Color(0xFF7E0000),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),
@@ -287,6 +317,7 @@ class CheckoutState extends State<Checkout> {
             'nameInProduct': nameInProduct,
             'productName': element.data()['name'],
             'color': element.data()['colorurl'],
+            'quantity': element.data()['quantity'],
             'colorName': element.data()['colorName'],
             'colorType': element.data()['colorType'],
             'price': element.data()['price'],
@@ -406,7 +437,7 @@ class CheckoutState extends State<Checkout> {
                                                     .size
                                                     .height *
                                                 0.125,
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.cover,
                                           ))
                                     ],
                                   ),
@@ -529,10 +560,8 @@ class CheckoutState extends State<Checkout> {
                             }
                             if (totalPrice == 0) {
                               for (var doc in snapshot.data!.docs) {
-                                var priceStr = doc['price'] as String;
-                                var price = int.tryParse(
-                                        priceStr.replaceAll('₪', '').trim()) ??
-                                    0;
+                                int priceStr = doc['price'];
+                                int price = priceStr;
                                 totalPrice += price;
                               }
                             }

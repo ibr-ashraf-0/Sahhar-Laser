@@ -75,7 +75,6 @@ class _AddCategoryState extends State<AddCategory> {
                         )
                       : Container(
                           color: Colors.grey.shade300,
-                          // color: Colors.amber,
                           height: MediaQuery.of(context).size.height * 0.30,
                           child: Center(
                             child: Column(
