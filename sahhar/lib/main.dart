@@ -51,16 +51,20 @@ class _SahharAppState extends State<SahharApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+          primaryColor: Color(0xFF7E0000),
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            secondary: Color.fromRGBO(126, 0, 0, 1),
+          ),
           appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF7E0000),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        )),
-        toolbarHeight: 60,
-        elevation: 0.0,
-      )),
+            backgroundColor: Color(0xFF7E0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+            toolbarHeight: 60,
+            elevation: 0.0,
+          )),
       debugShowCheckedModeBanner: false,
       home: StreamBuilder(
           stream: FirebaseAuth.instance.userChanges(),

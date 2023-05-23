@@ -35,464 +35,502 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 bottomRight: Radius.circular(20))),
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height * 0.98,
+        height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              FutureBuilder(
-                future:
-                    FirebaseFirestore.instance.collection("orderStates").get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return Container(
-                      height: 150,
-                      width: MediaQuery.of(context).size.width,
-                      child: const Center(
-                          child: CircularProgressIndicator(
-                        color: Colors.red,
-                      )),
-                    );
-                  } else {
-                    var ordersData = snapshot.data!.docs;
-                    int completedOrer = 0;
-                    int orderedOrder = 0;
-                    int workingOnOrder = 0;
-                    for (var element in ordersData) {
-                      if (element['packageStutes'] == 'Completed') {
-                        completedOrer += 1;
-                      }
-                      if (element['packageStutes'] == 'Ordered') {
-                        orderedOrder += 1;
-                      }
-                      if (element['packageStutes'] == 'Working on') {
-                        workingOnOrder += 1;
-                      }
-                    }
-                    for (int i = 0; i <= ordersData.length; i++) {
-                      if (i == ordersData.length && orderCont == 0) {
-                        for (var element in ordersData) {
-                          orderCont += int.tryParse(
-                              element['countOfOrders'].toString())!;
+        child: RefreshIndicator(
+          color: const Color(0xFF7E0000),
+          onRefresh: () async {
+            await Future.delayed(const Duration(seconds: 3))
+                .whenComplete(() => setState(
+                      () {},
+                    ));
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection("orderStates")
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return Container(
+                        height: 150,
+                        width: MediaQuery.of(context).size.width,
+                        child: const Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.red,
+                        )),
+                      );
+                    } else {
+                      var ordersData = snapshot.data!.docs;
+                      int completedOrer = 0;
+                      int orderedOrder = 0;
+                      int workingOnOrder = 0;
+                      for (var element in ordersData) {
+                        if (element['packageStutes'] == 'Completed') {
+                          completedOrer += 1;
+                        }
+                        if (element['packageStutes'] == 'Ordered') {
+                          orderedOrder += 1;
+                        }
+                        if (element['packageStutes'] == 'Working on') {
+                          workingOnOrder += 1;
                         }
                       }
-                    }
-                    return Column(children: [
-                      Card(
-                        color: Colors.white70,
-                        elevation: 5,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 8),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 8, right: 0, top: 15),
-                                    child: const Text(
-                                      'Count of order packages :',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 10, right: 0, top: 15),
-                                    child: Text(
-                                      ordersData.length.toString(),
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 8, right: 0),
-                                    child: const Text(
-                                      'Cont Of Combleted order packages :',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 10, right: 0),
-                                    child: Text(
-                                      completedOrer.toString(),
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  CircularPercentIndicator(
-                                    radius:
-                                        MediaQuery.of(context).size.width / 8.0,
-                                    lineWidth: 5.0,
-                                    animation: true,
-                                    percent: ((orderCont - orderedOrder) /
-                                            (orderCont + orderedOrder / 2) /
-                                            100.0 *
-                                            100.0)
-                                        .toDouble(),
-                                    center: Text(
-                                      orderCont != 0 && orderedOrder != 0
-                                          ? '${((orderCont - orderedOrder) / (orderCont + orderedOrder / 2) * 100).round()}%'
-                                          : '100 %',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.0),
-                                    ),
-                                    footer: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: Text(
-                                        'Orders',
-                                        style: TextStyle(
-                                            color: Colors.amber.shade500,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                                    ),
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor: Colors.amber,
-                                  ),
-                                  CircularPercentIndicator(
-                                    radius:
-                                        MediaQuery.of(context).size.width / 8.0,
-                                    lineWidth: 5.0,
-                                    animation: true,
-                                    percent: ((orderCont - workingOnOrder) /
-                                            (orderCont + workingOnOrder / 2) /
-                                            100.0 *
-                                            100.0)
-                                        .toDouble(),
-                                    center: Text(
-                                      orderCont != 0 && workingOnOrder != 0
-                                          ? '${((orderCont - workingOnOrder) / (orderCont + workingOnOrder / 2) * 100).round()}%'
-                                          : '100 %',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.0),
-                                    ),
-                                    footer: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: Text(
-                                        'Working on',
-                                        style: TextStyle(
-                                            color: Colors.red.shade500,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                                    ),
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor: Colors.red,
-                                  ),
-                                  CircularPercentIndicator(
-                                    radius:
-                                        MediaQuery.of(context).size.width / 8.0,
-                                    lineWidth: 5.0,
-                                    animation: true,
-                                    percent: ((orderCont - completedOrer) /
-                                            (orderCont + completedOrer / 2) /
-                                            100.0 *
-                                            100.0)
-                                        .toDouble(),
-                                    center: Text(
-                                      orderCont != 0 && completedOrer != 0
-                                          ? '${((orderCont - completedOrer) / (orderCont + completedOrer / 2) * 100).round()}%'
-                                          : '100 %',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.0),
-                                    ),
-                                    footer: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8),
+                      for (int i = 0; i <= ordersData.length; i++) {
+                        if (i == ordersData.length && orderCont == 0) {
+                          for (var element in ordersData) {
+                            orderCont += int.tryParse(
+                                element['countOfOrders'].toString())!;
+                          }
+                        }
+                      }
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.26,
+                        child: Card(
+                          color: Colors.white70,
+                          elevation: 5,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 8, right: 0, top: 15),
                                       child: const Text(
-                                        'Completed',
+                                        'Count of order packages :',
                                         style: TextStyle(
                                             color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
                                       ),
                                     ),
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor: Colors.black,
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 10, right: 0, top: 15),
+                                      child: Text(
+                                        ordersData.length.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 8, right: 0),
+                                      child: const Text(
+                                        'Cont Of Combleted order packages :',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                          left: 10, right: 0),
+                                      child: Text(
+                                        completedOrer.toString(),
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    CircularPercentIndicator(
+                                      radius:
+                                          MediaQuery.of(context).size.width /
+                                              8.0,
+                                      lineWidth: 5.0,
+                                      animation: true,
+                                      percent: (orderedOrder / orderCont),
+                                      center: Text(
+                                        orderCont != 0 && orderedOrder != 0
+                                            ? '${((orderedOrder / orderCont) * 100).round()}%'
+                                            : '0 %',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      ),
+                                      footer: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Text(
+                                          'Orders',
+                                          style: TextStyle(
+                                              color: Colors.amber.shade500,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      circularStrokeCap:
+                                          CircularStrokeCap.round,
+                                      progressColor: Colors.amber,
+                                    ),
+                                    CircularPercentIndicator(
+                                      radius:
+                                          MediaQuery.of(context).size.width /
+                                              8.0,
+                                      lineWidth: 5.0,
+                                      animation: true,
+                                      percent: (workingOnOrder / orderCont),
+                                      center: Text(
+                                        orderCont != 0 && workingOnOrder != 0
+                                            ? '${((workingOnOrder / orderCont) * 100).round()}%'
+                                            : '0 %',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      ),
+                                      footer: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Text(
+                                          'Working on',
+                                          style: TextStyle(
+                                              color: Colors.red.shade500,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      circularStrokeCap:
+                                          CircularStrokeCap.round,
+                                      progressColor: Colors.red,
+                                    ),
+                                    CircularPercentIndicator(
+                                      radius:
+                                          MediaQuery.of(context).size.width /
+                                              8.0,
+                                      lineWidth: 5.0,
+                                      animation: true,
+                                      percent: (completedOrer / orderCont),
+                                      center: Text(
+                                        orderCont != 0 && completedOrer != 0
+                                            ? '${((completedOrer / orderCont) * 100).round()}%'
+                                            : '0 %',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0),
+                                      ),
+                                      footer: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: const Text(
+                                          'Completed',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      circularStrokeCap:
+                                          CircularStrokeCap.round,
+                                      progressColor: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                              ]),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('products')
+                            .get(),
+                        builder: (contex, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.47,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.indigo,
+                                ),
+                              ),
+                            );
+                          }
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                contex,
+                                MaterialPageRoute(
+                                    builder: (context) => const Products()),
+                              );
+                            },
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.47,
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                  color: Colors.indigo,
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  const Text(
+                                    'Products',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 24),
+                                  ),
+                                  Text(
+                                    'You have ${snapshot.data!.docs.length} products',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 24),
+                                  ),
+                                  const Text(
+                                    'top here to see all products',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
                                   ),
                                 ],
                               ),
-                            ]),
+                            ),
+                          );
+                        },
                       ),
-                    ]);
-                  }
-                },
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('products')
-                          .get(),
-                      builder: (contex, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            width: MediaQuery.of(context).size.width * 0.47,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.indigo,
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('categories')
+                            .get(),
+                        builder: (contex, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.47,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.brown,
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              contex,
-                              MaterialPageRoute(
-                                  builder: (context) => const Products()),
                             );
-                          },
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            width: MediaQuery.of(context).size.width * 0.47,
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            decoration: BoxDecoration(
-                                color: Colors.indigo,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Text(
-                                  'Products',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 24),
-                                ),
-                                Text(
-                                  'You have ${snapshot.data!.docs.length} products',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 24),
-                                ),
-                                const Text(
-                                  'top here to see all products',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('categories')
-                          .get(),
-                      builder: (contex, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            width: MediaQuery.of(context).size.width * 0.47,
-                            child: const Center(
-                              child: CircularProgressIndicator(
+                          }
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                contex,
+                                MaterialPageRoute(
+                                    builder: (context) => const Categories()),
+                              );
+                            },
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.47,
+                              decoration: BoxDecoration(
                                 color: Colors.brown,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  const Text(
+                                    'Categories',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 24),
+                                  ),
+                                  Text(
+                                    'You have ${snapshot.data!.docs.length} categories',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 24),
+                                  ),
+                                  const Text(
+                                    'top here to see all Catogries',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ],
                               ),
                             ),
                           );
-                        }
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              contex,
-                              MaterialPageRoute(
-                                  builder: (context) => const Categories()),
-                            );
-                          },
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            width: MediaQuery.of(context).size.width * 0.47,
-                            decoration: BoxDecoration(
-                              color: Colors.brown,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Text(
-                                  'Categories',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 24),
-                                ),
-                                Text(
-                                  'You have ${snapshot.data!.docs.length} categories',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 24),
-                                ),
-                                const Text(
-                                  'top here to see all Catogries',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.40,
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
-                decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: const Text(
-                            'Users problem',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.w300),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.40,
+                  width: MediaQuery.of(context).size.width,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: const Text(
+                              'Users problem',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w300),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.white,
-                      thickness: 2,
-                    ),
-                    FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('usersProblem')
-                          .get(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done) {
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.white,
+                        thickness: 2,
+                      ),
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('usersProblem')
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.32,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          }
                           return SizedBox(
                             height: MediaQuery.of(context).size.height * 0.32,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        }
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.32,
-                          child: ListView.builder(
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (ctx, index) {
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 4, vertical: 4),
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                      color: Colors.blueGrey,
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            'Users name : ',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                          Text(
-                                            snapshot.data!.docs[index]
-                                                ['userName'],
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            'number : ',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                          Text(
-                                            snapshot.data!.docs[index]
-                                                    ['userNumber'] ??
-                                                '',
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 50,
-                                        child: Text(
-                                          snapshot.data!.docs[index]['problem'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              overflow: TextOverflow.fade,
-                                              fontWeight: FontWeight.bold),
+                            child: ListView.builder(
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (ctx, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 4, vertical: 4),
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                        color: Colors.blueGrey,
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  'Users name : ',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                                Text(
+                                                  snapshot.data!.docs[index]
+                                                      ['userName'],
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 2, top: 0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  snapshot.data!.docs[index]
+                                                      .reference
+                                                      .delete()
+                                                      .then((value) =>
+                                                          setState(() {}));
+                                                },
+                                                child: Icon(
+                                                  Icons.cancel_outlined,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }),
-                        );
-                      },
-                    )
-                  ],
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              'number : ',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
+                                            Text(
+                                              snapshot.data!.docs[index]
+                                                      ['userNumber'] ??
+                                                  '',
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          height: 50,
+                                          child: Text(
+                                            snapshot.data!.docs[index]
+                                                ['problem'],
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                overflow: TextOverflow.fade,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          );
+                        },
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
