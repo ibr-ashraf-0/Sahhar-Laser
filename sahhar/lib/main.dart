@@ -24,10 +24,14 @@ void main() async {
     );
   }
 
-  runApp(SahharApp());
+  runApp(SahharApp(
+    index: 0,
+  ));
 }
 
 class SahharApp extends StatefulWidget {
+  final int index;
+  const SahharApp({required this.index});
   @override
   State<SahharApp> createState() => _SahharAppState();
 }
@@ -40,6 +44,12 @@ class _SahharAppState extends State<SahharApp> {
     AccontInfo(),
   ];
   int _curntInedx = 0;
+
+  @override
+  void initState() {
+    _curntInedx = widget.index;
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {

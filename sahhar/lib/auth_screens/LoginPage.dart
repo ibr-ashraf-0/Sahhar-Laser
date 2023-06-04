@@ -69,7 +69,10 @@ class LoginPageState extends State<LoginPage> {
         );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SahharApp()),
+          MaterialPageRoute(
+              builder: (context) => SahharApp(
+                    index: 0,
+                  )),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -357,7 +360,9 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SahharApp()),
+                                    builder: (context) => SahharApp(
+                                          index: 0,
+                                        )),
                               );
                             }
                           },

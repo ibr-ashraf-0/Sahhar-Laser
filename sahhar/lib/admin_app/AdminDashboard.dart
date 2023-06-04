@@ -80,10 +80,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       }
                       for (int i = 0; i <= ordersData.length; i++) {
                         if (i == ordersData.length && orderCont == 0) {
-                          for (var element in ordersData) {
-                            orderCont += int.tryParse(
-                                element['countOfOrders'].toString())!;
-                          }
+                          orderCont = snapshot.data!.docs.length;
                         }
                       }
                       return Container(

@@ -2,346 +2,93 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sahhar/user_app/confirm.dart';
+// import 'package:sahhar/user_app/confirm.dart';
 
 class Checkout extends StatefulWidget {
   @override
   CheckoutState createState() => CheckoutState();
 }
 
+int totalPrice = 0;
+int allTotalPrice = 0;
+
 class CheckoutState extends State<Checkout> {
   bool payNow = false;
   bool payOnDelivery = true;
-  String nameInProduct = '';
 
-  int totalPrice = 0;
-  int orderCont = 0;
   final user = FirebaseAuth.instance.currentUser;
-  Future<void> placeOrder() async {
-    QuerySnapshot<Map<String, dynamic>> orderInfo = await FirebaseFirestore
-        .instance
-        .collection('users')
-        .doc(user?.uid)
-        .collection('cart')
-        .get();
-    DocumentSnapshot<Map<String, dynamic>> userInfo = await FirebaseFirestore
-        .instance
-        .collection('users')
-        .doc(user!.uid)
-        .get();
-    if (orderCont == 0) {
-      setState(() {
-        orderCont = orderInfo.docs.length;
-      });
-    }
-    orderInfo.docs.forEach((element) async {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.zero,
-            scrollable: true,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0)),
-            title: const Text("Let's reviwe your orders for last time",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Color(0xFF7E0000),
-                    fontWeight: FontWeight.bold)),
-            content: Container(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      decoration: BoxDecoration(
-                          border: const Border.fromBorderSide(
-                              BorderSide(width: 1.5)),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'product name : ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            width: 160,
-                            child: Text(
-                              '${element.data()['name']}',
-                              style: const TextStyle(
-                                  color: Color(0xFF7E0000),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      decoration: BoxDecoration(
-                          border: const Border.fromBorderSide(
-                              BorderSide(width: 1.5)),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'product price : ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '${element.data()['price']} ₪',
-                            style: const TextStyle(
-                                color: Color(0xFF7E0000),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      decoration: BoxDecoration(
-                          border: const Border.fromBorderSide(
-                              BorderSide(width: 1.5)),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Quantity : ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            width: 160,
-                            child: Text(
-                              '${element.data()['quantity']}',
-                              style: const TextStyle(
-                                  color: Color(0xFF7E0000),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      decoration: BoxDecoration(
-                          border: const Border.fromBorderSide(
-                              BorderSide(width: 1.5)),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Size : ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '${element.data()['size']}',
-                            style: const TextStyle(
-                                color: Color(0xFF7E0000),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      decoration: BoxDecoration(
-                          border: const Border.fromBorderSide(
-                              BorderSide(width: 1.5)),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Product Color : ',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '${element.data()['colorName']}',
-                            style: const TextStyle(
-                                color: Color(0xFF7E0000),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    element.data()['switchValue'] == true
-                        ? Container(
-                            margin: const EdgeInsets.symmetric(vertical: 4),
-                            child: const Text(
-                              'You Can write a name here to put it in your product',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          )
-                        : const SizedBox(
-                            height: 0,
-                            width: 0,
-                          ),
-                    element.data()['switchValue'] == true
-                        ? Container(
-                            margin: EdgeInsets.zero,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            child: TextFormField(
-                              onChanged: (value) {
-                                nameInProduct = value;
-                              },
-                              cursorColor: const Color(0xFF7E0000),
-                              decoration: InputDecoration(
-                                labelStyle: const TextStyle(
-                                  color: Color(0xFF7E0000),
-                                ),
-                                labelText: "Name in product",
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: const BorderSide(
-                                      color: Colors.black,
-                                      width: 1.5,
-                                    )),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF7E0000),
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                            ),
-                          )
-                        : const SizedBox(height: 0, width: 0),
-                  ],
-                )),
-            actionsAlignment: MainAxisAlignment.spaceAround,
-            actionsPadding: const EdgeInsets.symmetric(vertical: 16),
-            actions: <Widget>[
-              RawMaterialButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      width: 1.5,
-                      color: Color(0xFF7E0000),
-                    ),
-                    borderRadius: BorderRadius.circular(15)),
-                child: Text("Cancle",
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.red.shade300,
-                        fontWeight: FontWeight.bold)),
-              ),
-              RawMaterialButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      width: 1.5,
-                      color: Colors.black,
-                    ),
-                    borderRadius: BorderRadius.circular(15)),
-                child: const Text("OK",
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold)),
-              ),
-            ],
-          );
-        },
-      ).then((value) async {
-        if (value == true) {
-          DateTime date = DateTime.now();
-          String dateFormat = DateFormat('dd-MM-yyyy hh:mm').format(date);
-          await FirebaseFirestore.instance
-              .collection('orderStates')
-              .doc(user!.uid)
-              .set({
-            'email': user!.email,
-            'number': userInfo.data()?['phoneNumber'],
-            'userName': userInfo.data()?['Firstname'] +
-                ' ' +
-                userInfo.data()?['Lastname'],
-            'totalprice': totalPrice,
-            'orderDate': dateFormat,
-            'packageStutes': 'Ordered',
-            'countOfOrders': orderCont,
-          });
-          await FirebaseFirestore.instance
-              .collection('order')
-              .doc(user!.uid)
-              .collection('items')
-              .add({
-            'nameInProduct': nameInProduct,
-            'productName': element.data()['name'],
-            'color': element.data()['colorurl'],
-            'quantity': element.data()['quantity'],
-            'colorName': element.data()['colorName'],
-            'colorType': element.data()['colorType'],
-            'price': element.data()['price'],
-            'size': element.data()['size'],
-          });
 
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user?.uid)
-              .collection('cart')
-              .get()
-              .then((snapshot) {
-            for (DocumentSnapshot doc in snapshot.docs) {
-              if ((doc['name'] == element.data()['name']) && value) {
-                doc.reference.delete();
-              } else {
-                print('not the product alrit');
-              }
-            }
-          });
-        } else {
-          print('value from else $value');
-        }
-      });
+  Future<void> placeOrder() async {
+    // QuerySnapshot<Map<String, dynamic>> orderInfo = await FirebaseFirestore
+    //     .instance
+    //     .collection('users')
+    //     .doc(user?.uid)
+    //     .collection('cart')
+    //     .get();
+
+    // List<QueryDocumentSnapshot<Map<String, dynamic>>> ListData = orderInfo.docs;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          scrollable: true,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          actionsPadding: const EdgeInsets.symmetric(vertical: 16),
+          title: const Text("Let's reviwe your orders for last time",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Color(0xFF7E0000),
+                  fontWeight: FontWeight.bold)),
+          content: BuildAlratContent(),
+          actions: <Widget>[
+            RawMaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    width: 1.5,
+                    color: Color(0xFF7E0000),
+                  ),
+                  borderRadius: BorderRadius.circular(15)),
+              child: Text("Go Back",
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.red.shade300,
+                      fontWeight: FontWeight.bold)),
+            ),
+            RawMaterialButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    width: 1.5,
+                    color: Colors.black,
+                  ),
+                  borderRadius: BorderRadius.circular(15)),
+              child: const Text("Confirem",
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    ).then((value) {
+      if (value != true) {
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (ctx) => Confirm()));
+      }
     });
   }
 
@@ -563,6 +310,7 @@ class CheckoutState extends State<Checkout> {
                                 int priceStr = doc['price'];
                                 int price = priceStr;
                                 totalPrice += price;
+                                allTotalPrice += price;
                               }
                             }
 
@@ -630,6 +378,387 @@ class CheckoutState extends State<Checkout> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BuildAlratContent extends StatefulWidget {
+  const BuildAlratContent({super.key});
+
+  @override
+  State<BuildAlratContent> createState() => _BuildAlratContentState();
+}
+
+class _BuildAlratContentState extends State<BuildAlratContent> {
+  final user = FirebaseAuth.instance.currentUser;
+  String nameInProduct = '';
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.65,
+      width: MediaQuery.of(context).size.width * 0.65,
+      // color: Colors.white,
+      child: FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user?.uid)
+            .collection('cart')
+            .get(),
+        builder: (ctx, snapshot) {
+          return (snapshot.connectionState == ConnectionState.done &&
+                  (snapshot.data?.docs.length == 0 ||
+                      snapshot.data?.docs.length == 'null'))
+              ? Container(
+                  height: 100,
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  child: Center(
+                      child: Text(
+                    'Now you can press Confirem',
+                    style: TextStyle(color: Colors.green, fontSize: 24),
+                  )),
+                )
+              : ListView.builder(
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (ctx, index) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (totalPrice == 0) {
+                        for (var doc in snapshot.data!.docs) {
+                          int priceStr = doc['price'];
+                          int price = priceStr;
+                          totalPrice += price;
+                        }
+                      }
+                      print('total = $totalPrice');
+                      return Container(
+                        width: 100,
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        padding: EdgeInsets.symmetric(vertical: 2),
+                        color: const Color(0xFF7E0000).withOpacity(0.1),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  border: const Border.fromBorderSide(
+                                      BorderSide(width: 1.5)),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'product name : ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    width: 160,
+                                    child: Text(
+                                      '${snapshot.data?.docs[index].data()['name']}',
+                                      style: const TextStyle(
+                                          color: Color(0xFF7E0000),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  border: const Border.fromBorderSide(
+                                      BorderSide(width: 1.5)),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'product price : ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    '${snapshot.data?.docs[index].data()['price']} ₪',
+                                    style: const TextStyle(
+                                        color: Color(0xFF7E0000),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  border: const Border.fromBorderSide(
+                                      BorderSide(width: 1.5)),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Quantity : ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    width: 160,
+                                    child: Text(
+                                      '${snapshot.data?.docs[index].data()['quantity']}',
+                                      style: const TextStyle(
+                                          color: Color(0xFF7E0000),
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  border: const Border.fromBorderSide(
+                                      BorderSide(width: 1.5)),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Size : ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    '${snapshot.data?.docs[index].data()['size']}',
+                                    style: const TextStyle(
+                                        color: Color(0xFF7E0000),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              decoration: BoxDecoration(
+                                  border: const Border.fromBorderSide(
+                                      BorderSide(width: 1.5)),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Product Color : ',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    '${snapshot.data?.docs[index].data()['colorName']}',
+                                    style: const TextStyle(
+                                        color: Color(0xFF7E0000),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            snapshot.data?.docs[index].data()['switchValue'] ==
+                                    true
+                                ? Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    child: const Text(
+                                      'You Can write a name here to put it in your product',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                    width: 0,
+                                  ),
+                            snapshot.data?.docs[index].data()['switchValue'] ==
+                                    true
+                                ? Container(
+                                    margin: EdgeInsets.zero,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: TextFormField(
+                                      onChanged: (value) {
+                                        nameInProduct = value;
+                                      },
+                                      cursorColor: const Color(0xFF7E0000),
+                                      decoration: InputDecoration(
+                                        labelStyle: const TextStyle(
+                                          color: Color(0xFF7E0000),
+                                        ),
+                                        labelText: "Name in product",
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            borderSide: const BorderSide(
+                                              color: Colors.black,
+                                              width: 1.5,
+                                            )),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF7E0000),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(height: 0, width: 0),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                RawMaterialButton(
+                                  onPressed: () {
+                                    int priceStr =
+                                        snapshot.data?.docs[index]['price'];
+
+                                    setState(() {
+                                      totalPrice = totalPrice - priceStr;
+                                      allTotalPrice = allTotalPrice - priceStr;
+                                      snapshot.data?.docs[index].reference
+                                          .delete();
+                                    });
+                                  },
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1.5,
+                                        color: Color(0xFF7E0000),
+                                      ),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Text("Cancle",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.red.shade300,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                RawMaterialButton(
+                                  onPressed: () async {
+                                    DocumentSnapshot<Map<String, dynamic>>
+                                        userInfo = await FirebaseFirestore
+                                            .instance
+                                            .collection('users')
+                                            .doc(user!.uid)
+                                            .get();
+                                    DateTime date = DateTime.now();
+                                    String dateFormat =
+                                        DateFormat('dd-MM-yyyy hh:mm')
+                                            .format(date);
+                                    await FirebaseFirestore.instance
+                                        .collection('orderStates')
+                                        .doc(user!.uid)
+                                        .set({
+                                      'email': user!.email,
+                                      'number': userInfo.data()?['phoneNumber'],
+                                      'userName':
+                                          userInfo.data()?['Firstname'] +
+                                              ' ' +
+                                              userInfo.data()?['Lastname'],
+                                      'totalprice': allTotalPrice,
+                                      'orderDate': dateFormat,
+                                      'packageStutes': 'Ordered',
+                                    });
+                                    await FirebaseFirestore.instance
+                                        .collection('order')
+                                        .doc(user!.uid)
+                                        .collection('items')
+                                        .add({
+                                      'nameInProduct': nameInProduct,
+                                      'productName': snapshot.data?.docs[index]
+                                          .data()['name'],
+                                      'color': snapshot.data?.docs[index]
+                                          .data()['colorurl'],
+                                      'quantity': snapshot.data?.docs[index]
+                                          .data()['quantity'],
+                                      'colorName': snapshot.data?.docs[index]
+                                          .data()['colorName'],
+                                      'colorType': snapshot.data?.docs[index]
+                                          .data()['colorType'],
+                                      'price': snapshot.data?.docs[index]
+                                          .data()['price'],
+                                      'size': snapshot.data?.docs[index]
+                                          .data()['size'],
+                                    });
+                                    int priceStr =
+                                        snapshot.data?.docs[index]['price'];
+                                    setState(() {
+                                      totalPrice = totalPrice - priceStr;
+                                      snapshot.data?.docs[index].reference
+                                          .delete();
+                                    });
+                                  },
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1.5,
+                                        color: Colors.black,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: const Text("Add",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+
+                            // Divider(
+                            //   thickness: 2.5,
+                            //   color: Colors.green,
+                            // )
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * 0.65,
+                        color: Colors.white,
+                        child: Center(
+                            child: CircularProgressIndicator(
+                          color: const Color(0xFF7E0000),
+                        )),
+                      );
+                    }
+                  },
+                );
+        },
       ),
     );
   }

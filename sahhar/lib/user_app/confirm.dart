@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../main.dart';
 
-class confirm extends StatelessWidget {
+class Confirm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +42,10 @@ class confirm extends StatelessWidget {
                 const SizedBox(height: 15),
                 const Center(
                   child: Text(
-                    'Your order is set. It will be delivered\nwithin 7 days. You will be notified\nonce your order arrives at the\npickup station.',
+                    'Your order is set. You will be notified\nonce your order is completed to git it from the shope ',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF7E0000),
                     ),
@@ -57,7 +57,7 @@ class confirm extends StatelessWidget {
                     'Thank you for shopping at\nSahhar Laser.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -66,6 +66,8 @@ class confirm extends StatelessWidget {
                 Center(
                   child: TextButton(
                     style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all(
+                          const Color(0xFF7E0000).withOpacity(0.4)),
                       alignment: Alignment.center,
                       backgroundColor: MaterialStateProperty.all(
                           const Color(0xFF7E0000).withOpacity(0.1)),
@@ -73,11 +75,14 @@ class confirm extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => SahharApp()),
+                        MaterialPageRoute(
+                            builder: (context) => SahharApp(
+                                  index: 3,
+                                )),
                       );
                     },
                     child: const Text(
-                      'Back To Home Screen',
+                      'Go to profile to see order status',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 25,

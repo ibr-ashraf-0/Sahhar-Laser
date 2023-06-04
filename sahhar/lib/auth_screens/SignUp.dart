@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: MediaQuery.of(context).size.height * 0.20,
                 color: const Color(0xFF7E0000),
                 child: const Align(
                   alignment: Alignment.bottomLeft,

@@ -329,245 +329,294 @@ class ProductDetailsState extends State<ProductDetails> {
                           ],
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Text(
-                                      "Your Order Color is: ",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                      width: 80,
-                                      child: Text(
-                                        _currentColorName,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                            overflow: TextOverflow.ellipsis,
-                                            color: Color(0xFF7E0000),
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      padding: EdgeInsets.zero,
-                                      margin: EdgeInsets.zero,
-                                      child: Row(
+                      snapShot.data!.data()!['woodColors'].isEmpty &&
+                              snapShot.data!.data()!['regulerColor'].isEmpty
+                          ? Container(
+                              height: 0,
+                              width: 0,
+                            )
+                          : Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
                                         children: [
                                           const Text(
-                                            'reguler Colors',
+                                            "Your Order Color is: ",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
                                           ),
-                                          Checkbox(
-                                            activeColor:
-                                                const Color(0xFF7E0000),
-                                            value: isColorTypeReguler,
-                                            onChanged: (val) {
-                                              setState(() {
-                                                if (val!) {
-                                                  isColorTypeReguler = val;
-                                                  isColorTypeWoods = false;
-                                                } else {
-                                                  isColorTypeReguler = true;
-                                                }
-                                              });
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 3,
-                                    ),
-                                    Container(
-                                      height: 30,
-                                      padding: EdgeInsets.zero,
-                                      margin: EdgeInsets.zero,
-                                      child: Row(
-                                        children: [
-                                          const Text(
-                                            'woods Colors',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Checkbox(
-                                            activeColor:
-                                                const Color(0xFF7E0000),
-                                            value: isColorTypeWoods,
-                                            onChanged: (val) {
-                                              setState(() {
-                                                if (val!) {
-                                                  isColorTypeWoods = val;
-                                                  isColorTypeReguler = false;
-                                                } else {
-                                                  isColorTypeWoods = true;
-                                                }
-                                              });
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(15)),
-                              height: MediaQuery.of(context).size.height * 0.28,
-                              width: MediaQuery.of(context).size.width,
-                              child: (snapShot.data!
-                                              .data()!['woodColors']
-                                              .isEmpty &&
-                                          isColorTypeWoods) ||
-                                      (snapShot.data!
-                                              .data()!['regulerColor']
-                                              .isEmpty &&
-                                          isColorTypeReguler)
-                                  ? const Center(
-                                      child: Text(
-                                        'There is not available color',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                    )
-                                  : ListView.builder(
-                                      itemCount: isColorTypeReguler &&
-                                              !isColorTypeWoods
-                                          ? snapShot.data!
-                                              .data()!['regulerColor']
-                                              .length
-                                          : snapShot.data!
-                                              .data()!['woodColors']
-                                              .length,
-                                      itemBuilder: (context, index) {
-                                        return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 70,
-                                          margin: const EdgeInsets.only(
-                                              top: 5,
-                                              right: 2,
-                                              left: 2,
-                                              bottom: 0),
-                                          decoration: BoxDecoration(
-                                            image: !isColorTypeReguler
-                                                ? DecorationImage(
-                                                    image: NetworkImage(
-                                                        snapShot.data!.data()![
-                                                                'woodColors']
-                                                            [index]),
-                                                    fit: BoxFit.fill)
-                                                : null,
-                                            color: isColorTypeReguler
-                                                ? Color(int.tryParse(snapShot
-                                                    .data!
-                                                    .data()!['regulerColor']
-                                                        [index]
-                                                    .toString()) as int)
-                                                : null,
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                if (isColorTypeReguler) {
-                                                  _currentColorName =
-                                                      snapShot.data!.data()![
-                                                              'regulerNames']
-                                                          [index];
-
-                                                  _currentColor = snapShot.data!
-                                                          .data()![
-                                                      'regulerColor'][index];
-                                                } else {
-                                                  _currentColorName = snapShot
-                                                          .data!
-                                                          .data()!['woodNames']
-                                                      [index];
-                                                  _currentColor = snapShot.data!
-                                                          .data()!['woodColors']
-                                                      [index];
-                                                }
-                                              });
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.centerLeft,
-                                              child: ListTile(
-                                                leading: Text(
-                                                  isColorTypeReguler
-                                                      ? snapShot.data!.data()![
-                                                          'regulerNames'][index]
-                                                      : isColorTypeWoods
-                                                          ? snapShot.data!
-                                                              .data()![
-                                                                  'woodNames']
-                                                                  [index]
-                                                              .toString()
-                                                          : 'No Colors',
-                                                  style: TextStyle(
-                                                    color: (isColorTypeWoods ==
-                                                                true &&
-                                                            'Reguler Mirror' ==
-                                                                snapShot.data!
-                                                                        .data()![
-                                                                    'woodNames'][index])
-                                                        ? Colors.black
-                                                        : Colors.white,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                                trailing: (isColorTypeReguler &&
-                                                            _currentColorName ==
-                                                                snapShot.data!
-                                                                            .data()![
-                                                                        'regulerNames']
-                                                                    [index]) ||
-                                                        (isColorTypeWoods &&
-                                                            _currentColorName ==
-                                                                snapShot.data!
-                                                                        .data()![
-                                                                    'woodNames'][index])
-                                                    ? const Icon(
-                                                        Icons.check,
-                                                        color: Colors.white,
-                                                      )
-                                                    : const SizedBox(
-                                                        height: 0,
-                                                        width: 0,
-                                                      ),
-                                              ),
+                                          SizedBox(
+                                            height: 20,
+                                            width: 80,
+                                            child: Text(
+                                              _currentColorName,
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Color(0xFF7E0000),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            height: 20,
+                                            padding: EdgeInsets.zero,
+                                            margin: EdgeInsets.zero,
+                                            child: Row(
+                                              children: [
+                                                const Text(
+                                                  'reguler Colors',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Checkbox(
+                                                  activeColor:
+                                                      const Color(0xFF7E0000),
+                                                  value: isColorTypeReguler,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (val!) {
+                                                        isColorTypeReguler =
+                                                            val;
+                                                        isColorTypeWoods =
+                                                            false;
+                                                      } else {
+                                                        isColorTypeReguler =
+                                                            true;
+                                                      }
+                                                    });
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 3,
+                                          ),
+                                          Container(
+                                            height: 30,
+                                            padding: EdgeInsets.zero,
+                                            margin: EdgeInsets.zero,
+                                            child: Row(
+                                              children: [
+                                                const Text(
+                                                  'woods Colors',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Checkbox(
+                                                  activeColor:
+                                                      const Color(0xFF7E0000),
+                                                  value: isColorTypeWoods,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (val!) {
+                                                        isColorTypeWoods = val;
+                                                        isColorTypeReguler =
+                                                            false;
+                                                      } else {
+                                                        isColorTypeWoods = true;
+                                                      }
+                                                    });
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  snapShot.data!
+                                              .data()!['woodColors']
+                                              .isEmpty &&
+                                          snapShot.data!
+                                              .data()!['regulerColor']
+                                              .isEmpty
+                                      ? Container(
+                                          height: 0,
+                                          width: 0,
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey.shade300,
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.28,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: (snapShot.data!
+                                                          .data()!['woodColors']
+                                                          .isEmpty &&
+                                                      isColorTypeWoods) ||
+                                                  (snapShot.data!
+                                                          .data()![
+                                                              'regulerColor']
+                                                          .isEmpty &&
+                                                      isColorTypeReguler)
+                                              ? const Center(
+                                                  child: Text(
+                                                    'There is not available color',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 26,
+                                                        fontWeight:
+                                                            FontWeight.w300),
+                                                  ),
+                                                )
+                                              : ListView.builder(
+                                                  itemCount:
+                                                      isColorTypeReguler &&
+                                                              !isColorTypeWoods
+                                                          ? snapShot.data!
+                                                              .data()![
+                                                                  'regulerColor']
+                                                              .length
+                                                          : snapShot.data!
+                                                              .data()![
+                                                                  'woodColors']
+                                                              .length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 70,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 5,
+                                                              right: 2,
+                                                              left: 2,
+                                                              bottom: 0),
+                                                      decoration: BoxDecoration(
+                                                        image: !isColorTypeReguler
+                                                            ? DecorationImage(
+                                                                image: NetworkImage(snapShot
+                                                                        .data!
+                                                                        .data()![
+                                                                    'woodColors'][index]),
+                                                                fit: BoxFit.fill)
+                                                            : null,
+                                                        color: isColorTypeReguler
+                                                            ? Color(int.tryParse(snapShot
+                                                                .data!
+                                                                .data()![
+                                                                    'regulerColor']
+                                                                    [index]
+                                                                .toString()) as int)
+                                                            : null,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                      ),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (isColorTypeReguler) {
+                                                              _currentColorName =
+                                                                  snapShot.data!
+                                                                          .data()![
+                                                                      'regulerNames'][index];
+
+                                                              _currentColor = snapShot
+                                                                          .data!
+                                                                          .data()![
+                                                                      'regulerColor']
+                                                                  [index];
+                                                            } else {
+                                                              _currentColorName =
+                                                                  snapShot.data!
+                                                                          .data()![
+                                                                      'woodNames'][index];
+                                                              _currentColor = snapShot
+                                                                          .data!
+                                                                          .data()![
+                                                                      'woodColors']
+                                                                  [index];
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: ListTile(
+                                                            leading: Text(
+                                                              isColorTypeReguler
+                                                                  ? snapShot
+                                                                          .data!
+                                                                          .data()!['regulerNames']
+                                                                      [index]
+                                                                  : isColorTypeWoods
+                                                                      ? snapShot
+                                                                          .data!
+                                                                          .data()![
+                                                                              'woodNames']
+                                                                              [
+                                                                              index]
+                                                                          .toString()
+                                                                      : 'No Colors',
+                                                              style: TextStyle(
+                                                                color: (isColorTypeWoods ==
+                                                                            true &&
+                                                                        'Reguler Mirror' ==
+                                                                            snapShot.data!.data()!['woodNames'][
+                                                                                index])
+                                                                    ? Colors
+                                                                        .black
+                                                                    : Colors
+                                                                        .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 18,
+                                                              ),
+                                                            ),
+                                                            trailing: (isColorTypeReguler &&
+                                                                        _currentColorName ==
+                                                                            snapShot.data!.data()!['regulerNames'][
+                                                                                index]) ||
+                                                                    (isColorTypeWoods &&
+                                                                        _currentColorName ==
+                                                                            snapShot.data!.data()!['woodNames'][index])
+                                                                ? const Icon(
+                                                                    Icons.check,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  )
+                                                                : const SizedBox(
+                                                                    height: 0,
+                                                                    width: 0,
+                                                                  ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                        ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(height: 15),
                       Container(
                         decoration: BoxDecoration(

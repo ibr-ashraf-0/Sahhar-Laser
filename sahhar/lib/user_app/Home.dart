@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent:
                           MediaQuery.of(context).size.height * 0.43,
-                      mainAxisExtent: MediaQuery.of(context).size.width * 0.60,
+                      mainAxisExtent: MediaQuery.of(context).size.height * 0.30,
                       childAspectRatio: 1,
                       crossAxisSpacing: 0,
                       mainAxisSpacing: 0,
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                                     margin: const EdgeInsets.symmetric(
                                         horizontal: 4),
                                     height: MediaQuery.of(context).size.height *
-                                        0.18,
+                                        0.20,
                                     width: MediaQuery.of(context).size.width *
                                         0.42,
                                     child: ClipRRect(
@@ -100,12 +100,14 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 8),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.06,
                                     child: Center(
                                       child: Text(
                                         doc['name'],
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
+                                          overflow: TextOverflow.fade,
                                           color: Color(0xFF7E0000),
                                           fontWeight: FontWeight.normal,
                                           fontSize: 20,
