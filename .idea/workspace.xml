@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4c5f293c-d3ed-4e8f-b39e-4c63b79b2a3f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/admin_app/AdminDashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/admin_app/AdminDashboard.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/auth_screens/LoginPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/auth_screens/LoginPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/auth_screens/startScreen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/CartPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/CartPage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/Home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/Home.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/ProductDetails.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/ProductDetails.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/confirm.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/confirm.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/confirmation.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sahhar/lib/user_app/products.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/user_app/products.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sahhar/lib/auth_screens/SignUp.dart" beforeDir="false" afterPath="$PROJECT_DIR$/sahhar/lib/auth_screens/SignUp.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +48,7 @@
       <recent name="C:\Users\hp\DEVOLPMENT\projects\sahhar-master\sahhar\lib\admin_app" />
     </key>
   </component>
-  <component name="RunManager" selected="Flutter.main.dart">
+  <component name="RunManager" selected="Dart Command Line App.main">
     <configuration name="main" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <method v="2" />
     </configuration>
